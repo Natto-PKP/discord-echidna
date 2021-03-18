@@ -4,8 +4,7 @@ const _events = {
 	ready: require('../Events/Ready')
 }
 
-module.exports = ''
-class Echidna {
+module.exports = class Echidna {
 	/**
      * @param {String} token 
 	 * @param {?{}} [options] 
