@@ -4,7 +4,7 @@ declare module 'discord-echidna' {
 	// Classes
 
 	export class Echidna {
-		constructor (token: string, private options?: BaseOptions)
+		constructor (token: string, options?: BaseOptions)
 		public on<K extends keyof ListenerParams> (event: K, listener?: (params: ListenerParams[K]) => void): this
 	}
 
