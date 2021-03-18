@@ -24,20 +24,28 @@ echidna.on('ready', ({ client }) => console.log(`${client.user.tag} is ready!`))
 
 > `class` **Echidna**
 > ```js
-> new Echidna(token, options)
+> const echidna = new Echidna(token, options)
 > ```
-> **token** > Discord token of the bot
-> **options** > Object{}
-> **options.ignore** > Object{}
-> **options.ignore.guilds** > Object[]
-> **options.ignore.users** > Object[]
-> **options.client** > [ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions)
+> `param` **token** > Discord token of the bot<br> 
+> `param` **options** > Object{ } Module options<br>
+> `param` **options.ignore** > { guilds: Object[ ], users: Object[ ] } Id of servers|members that the bot ignores <br>
+> `param` **options.client** > [ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions)
+> 
+> `property` **<Echidna>.client** > [Client](https://discord.js.org/#/docs/main/stable/class/Client)<br>
+> `property` **<Echidna>.options** > Object{ }
+> 
+> `method` **<Echidna>.on()**
+> > ```js
+> > echidna.on(event, listener)
+> > ```
+> > `param` **event** > Compatible Discord client event: ready, ... (more in comming)<br>
+> > `param` **listener** > Include your code in this function
 
 ### Private
 
 > `class` **ReadyEvent**
 > ```js
-> new ReadyEvent([Client](https://discord.js.org/#/docs/main/stable/class/Client), Function)
+> new ReadyEvent(Client, Function)
 
 ## Dependencies
 
