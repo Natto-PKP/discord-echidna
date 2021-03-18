@@ -9,7 +9,7 @@ declare module 'discord-echidna' {
 	}
 
 	export class ReadyEvent {
-		constructor (client: Client, listener?: (params: ListenerParams[K]) => void)
+		constructor (client: Client, listener?: (params: any) => void)
 	}
 
 	// Typings
@@ -20,6 +20,6 @@ declare module 'discord-echidna' {
 	}
 
 	interface ListenerParams {
-		ready: { Event?: ReadyEvent; client?: Client }
+		ready: { client?: Client; Event?: ReadyEvent }
 	}
 }
