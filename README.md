@@ -39,7 +39,7 @@ echidna.on('ready', ({ client }) => console.log(`${client.user.tag} is ready!`))
 > 
 > `method` **<Echidna>.on(event, listener)**
 > > ```js
-> > echidna.on('ready', () => void)
+> > echidna.on('ready', ({ client, Event /*ReadyEvent*/ }) => void)
 > > ```
 > > `param` **event** > Compatible Discord client event: ready, ... (more in comming)<br>
 > > `param` **listener** > Include your code in this function
