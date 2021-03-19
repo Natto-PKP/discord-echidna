@@ -1,6 +1,6 @@
 {
 	"name": "discord-echidna",
-	"version": "1.0.15",
+	"version": "1.0.16",
 	"description": "A structure for discord.js bot",
 	"main": "./src/index.js",
 	"types": "./typings/index.d.ts",
@@ -19,6 +19,7 @@
 	"homepage": "https://github.com/Natto-PKP/discord-echidna#readme",
 	"keywords": ["discord", "bot", "client", "node", "discordapp", "echidna"],
 	"dependencies": {
-		"discord.js": "^12.5.1"
+		"discord.js": "^12.5.1",
+		"fs": "0.0.1-security"
 	}
 }
