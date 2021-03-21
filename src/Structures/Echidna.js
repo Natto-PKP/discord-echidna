@@ -1,3 +1,4 @@
+const Documents = require('./Documents')
 const { Client } = require('discord.js')
 
 const _events = {
@@ -28,6 +29,7 @@ module.exports = class Echidna {
 
 		this.options = options
 		this.client = new Client(options.client)
+		this.documents = new Documents()
 		this.client.login(token)
 	}
 
@@ -46,6 +48,6 @@ module.exports = class Echidna {
 		if (!result) throw Error(`"${event}" event is not supported`)
 		if (!listener) listener = () => null
 		if (typeof listener != 'function') throw Error('listener must be a function')
-		return new _events[event](this.client, listener, Object.assign(options, this.options))
+		return new _events[event](this.client, listener, Object.assign(options, this.options), { Documents: this.documents })
 	}
 }

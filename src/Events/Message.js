@@ -7,7 +7,7 @@ module.exports = class MessageEvent {
      * @param {Function} listener 
      * @param {any} param3
      */
-	constructor (client, listener, { ignore, prefix, owners, commandsDir }) {
+	constructor (client, listener, { ignore, prefix, owners, commandsDir }, { Documents }) {
 		if (!prefix || typeof prefix != 'string') prefix = null
 
 		this.client = client
@@ -35,11 +35,11 @@ module.exports = class MessageEvent {
 
 			const reg = message.content.toLowerCase().match(`^(<@!?${client.user.id}> (?= *)|${prefix}(?=[A-Za-z-]))`)
 			const [PREFIX, command, ...args] = reg ? [reg[0], ...message.content.toLowerCase().slice(reg[0].length).trim().split(/\s+/g)] : [, ...message.content.toLowerCase().split(/\s+/g)]
-			const pack = { message, prefix: PREFIX, command, args, commands: this.commands, Event: this, client: this.client }
+			const pack = { client: this.client, message, prefix: PREFIX, command, args, commands: this.commands, Event: this, Documents }
 
 			listener(pack)
 
-			if (message.guild || !message.author.bot) {
+			if (message.guild && !message.author.bot) {
 				const cmd = prefix && prefix.length > 0 && PREFIX && this.commands.get(command)
 				if (!cmd) return
 

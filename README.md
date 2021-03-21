@@ -1,140 +1,220 @@
-# discord-echidna [Structure for discord.js bot.]
-> **Install**: `npm i discord-echidna`
+# A structure to simply make your bots under discord.js.
+**Install**: `npm install discord-echidna` | `npm i discord-echidna`
 
-## Table of contents
+> `Documents` > Integrated and modular database. (JSON)<br>
+> `Commands` > Simple and efficient order management.
 
-- [Exemple](#example-usage)
+# Example usage
+
+```js
+const { Echidna } = require('discord-echidna')
+
+// Create a Echidna client
+const echidna = new Echidna('DiscordBotToken')
+
+// Ready event 
+echidna.on('ready', ({ client }) => {
+  console.log(`${client.user.tag} is ready!`)
+})
+
+// Message event - Take CommandsManager of the event
+const { commands } = echidna.on('message', ({ message, command, args }) => {
+  if (command == 'you') return message.react('💌')
+  if (command == 'me' && args[0] == '?') return message.react('💤')
+}, { prefix: '!' })
+
+// Create a command
+commands.create(
+  // Take many arguments
+  ({ message }) => {
+    message.channel.send(message.author.displayAvatarURL())
+  },
+  { name: 'avatar', aliases: ['pp', 'pdp'], permissions: { client: ['SEND_MESSAGES'] } }
+)
+```
+
+# Table of contents
+
 - [Documentation](#documentation)
-  - [Primary](#primary)
+  - [Structures](#structures)
     - [Echidna](#class-echidna)
+    - [Documents](#class-documents)
   - [Managers](#managers)
-    - [Commands](#class-commandsmanager)
-  - [Private](#private)
+    - [CommandsManager](#class-commandsmanager)
+    - [DocumentManager](#class-documentmanager)
+    - [ModelsManager](#class-modelsmanager)
+  - [Events](#events)
+    - [MessageEvent](#class-messageevent)
+    - [ReadyEvent](#class-readyevent)
   - [Interfaces](#interfaces)
 - [Dependencies](#dependencies)
 - [Help](#help)
 
-## Example usage
 
-```js
-const { Echidna } = require('discord-echidna')
-const echidna = new Echidna('token')
+# Documentation
 
-echidna.on('ready', ({ client }) => console.log(`${client.user.tag} is ready!`))
-echidna.on('message', () => {}, { prefix: '!', commandsDir: 'commands' })
-```
+## Structures
 
-## Documentation
-
-### Primary
-
-#### `class` **Echidna**
+### `class` Echidna
+> Echidna client.
 > ```js
-> const echidna = new Echidna(token, options)
+> const { Echidna } = require('discord-echidna')
+> const echidna = new Echidna(token, options?)
 > ```
-> `param` **token** > Discord token of the bot<br> 
-> `param` **options** > Object{ } - Module options<br>
-> `param` **options.ignore** > Object{ } Id of servers|members that the bot ignores<br>
-> `param` **options.ignore.guilds** > String[ ]<br>
-> `param` **options.ignore.users** > String[ ]<br>
-> `param` **options.client** > [ClientOptions](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions)
+> `param` **token** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> `param` **options?** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)<br>
+> `param` **options.ignore?** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)<br>
+> `param` **options.ignore.guilds?** > [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<String>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> `param` **options.ignore.users?** > [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<String>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> `param` **options.client?** > [\<Client>](https://discord.js.org/#/docs/main/stable/class/Client)<br>
+> `param` **options.owner?** > [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<String>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
 > 
-> `property` **Echidna.client** > [Client](https://discord.js.org/#/docs/main/stable/class/Client)<br>
-> `property` **Echidna.options** > Object{ } - Options of the bot
+> `property` **client** > [\<ClientOptions>](https://discord.js.org/#/docs/main/stable/typedef/ClientOptions)<br>
+> `property` **documents** > [\<Documents>](#class-documents)<br>
+> `property` **options** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)<br>
 > 
-> `method` **Echidna.on(event, listener, options)**
+> #### `method` **\<Echidna>**.on(event, listener?, options?)
+> > Watch a specific event.
 > > ```js
-> > echidna.on('ready', ({ client, Event /*ReadyEvent*/ }) => console.log(`${client.user.tag} is ready!`)
+> > const { Echidna } = require('discord-echidna')
+> > const echidna = new Echidna('DiscordBotToken')
+> > 
+> > echidna.on('ready', ({ client }) => console.log(client.user.username + ' is ready.'))
 > > ```
-> > `param` **event** > Compatible [Discord client event](https://discord.js.org/#/docs/main/stable/class/Client): [Events](#events) <br>
-> > `param` **listener** > Include your code in this function
-> > `param` **options** > Look options for selected event
-> > `return` [Event](#events)
+> > `param` **event** > [Events](#events)<br>
+> > `param` **listener** > [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)<br>
+> > `param` **options** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)<br>
+> >
+> > `return` [Events](#events)
 
-### Managers
+### `class` Documents
+> Manage your database document.<br>
+> `property` **models** > [ModelsManager](#class-modelsmanager)<br>
+> `property` **path** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> 
+> #### `method` **\<Documents>**.delete(ID, modelName)
+> > Delete a database document.
+> > ```js
+> > Documents.delete('1234', 'user-exp')
+> > ```
+> > `param` **ID** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> > `param` **modelName** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) - Add a model: [\<ModelsManager>.add()](#method-modelsmanager.addname-base)<br>
+> 
+> #### `method` **\<Documents>**.open(ID, modelNAme)
+> > Open or create database document.
+> > ```js
+> > const doc = Documents.open('12345', 'user-exp')
+> > ```
+> > `param` **ID** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> > `param` **modelName** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) - Add a model: [\<ModelsManager>.add()](#method-modelsmanager.addname-base)<br>
+> > 
+> > `return` [\<DocumentManager>](#class-documentmanager)
 
-#### `class` **CommandsManager**
-> ```js
-> const echidna = new Echidna(token)
+## Managers
+
+### `class` CommandsManager
+> Manage bot commands<br>
+> `property` **table** > [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<Object>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)<br>
+> `property` **cooldowns** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)<br>
+> 
+> #### `method` **\<CommandsManager>**.create(exec, options, help)
+> > Create a new command in commandsManager.
+> > ```js
+> > CommandsManager.create(
+> >   ({ client }) => console.log(client.guilds.cache.size + ' guilds'),
+> >   { name: 'count' }
+> > )
+> > ```
+> > `param` **exec** > [Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function)<br>
+> > `param` **options** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)<br>
+> > `param` **options.name** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> > `param` **options.aliases** > [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<String>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> > `param` **options.cooldown** > [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)<br>
+> > `param` **options.permissions** > [Commands Permissions](#interface-permissions)<br>
+> > `param` **options.allow** > [Allow ids](#interface-allowedordenyid)<br>
+> > `param` **options.deny** > [Denied ids](#interface-allowedordenyid)<br>
+> > `param` **help** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)<br>
 >
-> const { commands } = echidna.on('message', ({ command }) => message.react('💌'), { prefix: '!', commandsDir: './commands' })
->
-> commands.create(
->   ({ message, args, commands }) => {
->     if(!args[0]) return message.reply('args[0] is undefined')
->     console.log(commands.get(args[0]))
->   },
->   { name: 'cmd', permissions: { flags: ['owner] } }
-> )
-> ```
-> `property` **table** > Object[ ] - Table of commands
-> `property` **cooldowns** > Object { } - Command cooldown memory
+> #### `method` **\<CommandsManager>**.get(name)
+> > Get command object.<br>
+> > `param` **name** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> >
+> > `return` [Object?](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)<br>
 > 
-> `method` **CommandsManager.create(exec, options, help)**
-> > ```js
-> > commands.create(({ client }) => console.log(client.guilds.cache.size), { name: 'guilds', aliases: ['g'] })
-> > ```
-> > `param` **exec** > Write code of the command - [MessageEvent](#class-messageevent)<br>
-> > `param` **options** > Object{ }<br>
-> > `param` **options.name** > String<br>
-> > `param` **options.aliases** > String[ ]<br>
-> > `param` **options.cooldown** > Number<br>
-> > `param` **options.permissions** > Object{[Permissions interface](#permissions)}<br>
-> > `param` **options.allow** > Object{[Allowed IDs](#allowedordenyid)}<br>
-> > `param` **options.deny** > Object{[Denied IDs](#allowedordenyid)}<br>
-> > `param` **help** > Object{ } - An empty object to organize your help command<br>
->
-> `method` **CommandsManager.get(name)**
-> > ```js
-> > commands.get('hello')
-> > ```
-> > `param` **name** > String<br>
-> > `return` Object?
+> #### `method` **\<CommandsManager>**.exist(...names)
+> > Check if this names already exist.<br>
+> > `param` **names** > [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<String>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> > 
+> > `return` [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+
+
+### `class` DocumentManager
+> An open document of your database.<br>
+> `property` **content** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<br>
+> `property` **default** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<br>
+> `property` **path** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
 > 
-> `method` **CommandsManager.exist(...names)**
+> #### `method` **\<DocumentManager>**.delete()
+> > Delete this document.
+> 
+> #### `method` **\<DocumentManager>**.exist()
+> > Check if this document exist.<br>
+> > `return` [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)<br>
+> 
+> #### `method` **\<DocumentManager>**.save()
+> > Save document update.
+>
+> #### `method` **\<DocumentManager>**.reset()
+> > Reset this document.<br>
+> > `return` [DocumentManager](#class-documentmanager)
+
+### `class` ModelsManager
+> Manage documents models.<br>
+> `property` **table** [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<Object>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)> 
+> 
+> #### `method` **\<ModelsManager>**.add(name, base)
+> > Add a document model
 > > ```js
-> > commands.exist('hi', 'cat', 'cake')
+> > ModelsManager.add('user-exp', { level: 0, exp: 0 })
 > > ```
-> > `param` **names** > ...String[]<br>
-> > `return` Boolean
+> > `param` **name** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> > `param` **base** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
 
-### Private
+## Events
 
-#### `class` **ReadyEvent**
-> ```js
-> new ReadyEvent(Client, Function)
-> ```
-> `property` **client** > [Client](https://discord.js.org/#/docs/main/stable/class/Client)
-
-#### `class` **MessageEvent**
-> ```js
-> new MessageEvent(Client, Function, Object)
-> ```
+### `class` MessageEvent
 > `property` **client** > [Client](https://discord.js.org/#/docs/main/stable/class/Client)<br>
-> `property` **commands** > [CommandsManager](#class-commandsmanager)
+> `property` **commands** > [CommandsManager](#class-commandsmanager)<br>
+> **Listener arguments**: { client: [Client](https://discord.js.org/#/docs/main/stable/class/Client), message: [Message](https://discord.js.org/#/docs/main/stable/class/Message), prefix: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), commands: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), args: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<String>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), Commands: [CommandsManager](#class-commandsmanager), Event: [MessageEvent](#class-messageevent), Documents: [Documents](#class-documents) }
 
-### Interfaces
+### `class` ReadyEvent
+> `property` **client** > [Client](https://discord.js.org/#/docs/main/stable/class/Client)<br>
+> **Listener arguments**: { client: [Client](https://discord.js.org/#/docs/main/stable/class/Client), Event: [ReadyEvent](#class-readyevent), Documents: [Documents](#class-documents) }
 
-#### Events
-> `ready`: [ReadyEvent](#class-readyevent)<br>
-> `message`: [MessageEvent](#class-messageevent)
+## Interfaces
 
-#### Permissions
-> `property` **users** > Array[[Discord permissions](https://discord.js.org/#/docs/main/stable/class/Permissions?scrollTo=s-FLAGS)]<br>
-> `property` **client** > Array[[Discord permissions](https://discord.js.org/#/docs/main/stable/class/Permissions?scrollTo=s-FLAGS)]<br>
-> `property` **flags** > String['owner'] 
+### `interface` AllowedOrDenyID
+> `property` **users** > [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<String>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> `property` **guilds** > [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<String>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> `property` **channels** > [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<String>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> `property` **roles** > [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<String>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
 
-#### AllowedOrDenyID
-> `property` **users** > String[ ] - Table of users ids<br>
-> `property` **guilds** > String[ ] - Table of guilds ids<br>
-> `property` **channels** > String[ ] - Table of channels ids<br>
-> `property` **roles** > String[ ] - Table of roles ids
+### `type` EchidnaFlags
+> ```js
+> 'owner', ...customsFlags
+> ```
 
-## Dependencies
+### `interface` Permissions
+> `property` **users** > [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<Permissions>](https://discord.js.org/#/docs/main/stable/class/Permissions?scrollTo=s-FLAGS)<br>
+> `property` **client** > [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<Permissions>](https://discord.js.org/#/docs/main/stable/class/Permissions?scrollTo=s-FLAGS)<br>
+> `property` **flags** > [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<EchidnaFlags>](#type-echidnaflags)<br>
+
+# Dependencies
 
 - [discord.js](https://www.npmjs.com/package/discord.js)
 
-## Help
+# Help
 
 - Support server: https://discord.gg/6dDwP4x9aD
 - Discord.js unofficial help: https://discord.gg/3p7Kcy2zUT
