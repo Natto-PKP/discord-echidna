@@ -43,9 +43,6 @@ commands.create(
     - [CommandsManager](#class-commandsmanager)
     - [DocumentManager](#class-documentmanager)
     - [ModelsManager](#class-modelsmanager)
-  - [Events](#events)
-    - [MessageEvent](#class-messageevent)
-    - [ReadyEvent](#class-readyevent)
   - [Interfaces](#interfaces)
 - [Dependencies](#dependencies)
 - [Help](#help)
@@ -100,6 +97,12 @@ commands.create(
 > > `param` **ID** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
 > > `param` **modelName** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) - Add a model: [\<ModelsManager>.add()](#method-modelsmanager.addname-base)<br>
 > 
+> #### `method` **\<DocumentManager>**.exist(ID, modelName)
+> > Check if this document exist.<br>
+> > `param` **ID** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
+> > `param` **modelName** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) - Add a model: [\<ModelsManager>.add()](#method-modelsmanager.addname-base)<br>
+> > `return` [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)<br>
+>
 > #### `method` **\<Documents>**.open(ID, modelNAme)
 > > Open or create database document.
 > > ```js
@@ -158,10 +161,6 @@ commands.create(
 > #### `method` **\<DocumentManager>**.delete()
 > > Delete this document.
 > 
-> #### `method` **\<DocumentManager>**.exist()
-> > Check if this document exist.<br>
-> > `return` [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)<br>
-> 
 > #### `method` **\<DocumentManager>**.save()
 > > Save document update.
 >
@@ -180,17 +179,6 @@ commands.create(
 > > ```
 > > `param` **name** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
 > > `param` **base** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
-
-## Events
-
-### `class` MessageEvent
-> `property` **client** > [Client](https://discord.js.org/#/docs/main/stable/class/Client)<br>
-> `property` **commands** > [CommandsManager](#class-commandsmanager)<br>
-> **Listener arguments**: { client: [Client](https://discord.js.org/#/docs/main/stable/class/Client), message: [Message](https://discord.js.org/#/docs/main/stable/class/Message), prefix: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), commands: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), args: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<String>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), Commands: [CommandsManager](#class-commandsmanager), Event: [MessageEvent](#class-messageevent), Documents: [Documents](#class-documents) }
-
-### `class` ReadyEvent
-> `property` **client** > [Client](https://discord.js.org/#/docs/main/stable/class/Client)<br>
-> **Listener arguments**: { client: [Client](https://discord.js.org/#/docs/main/stable/class/Client), Event: [ReadyEvent](#class-readyevent), Documents: [Documents](#class-documents) }
 
 ## Interfaces
 

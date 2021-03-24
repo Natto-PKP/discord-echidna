@@ -3,11 +3,11 @@ const { existsSync, readdirSync, lstatSync } = require('fs')
 
 module.exports = class MessageEvent {
 	/**
-     * @param {Object} client 
-     * @param {Function} listener 
-     * @param {any} param3
+     * @param {*} listener 
+     * @param {*} param2 
+     * @param {*} Documents 
      */
-	constructor (client, listener, { ignore, prefix, owners, commandsDir }, { Documents }) {
+	constructor (listener, { ignore, prefix, owners, commandsDir }, { client, Documents }) {
 		if (!prefix || typeof prefix != 'string') prefix = null
 
 		this.client = client
@@ -31,11 +31,11 @@ module.exports = class MessageEvent {
 		}
 
 		client.on('message', (message) => {
-			if (ignore.users.includes(message.author.id) || ignore.guilds.includes(message.guild.id)) return
+			if (!message || (message && ((message.author && ignore.users.includes(message.author.id)) || (message.guild && ignore.guilds.includes(message.guild.id))))) return
 
 			const reg = message.content.toLowerCase().match(`^(<@!?${client.user.id}> (?= *)|${prefix}(?=[A-Za-z-]))`)
 			const [PREFIX, command, ...args] = reg ? [reg[0], ...message.content.toLowerCase().slice(reg[0].length).trim().split(/\s+/g)] : [, ...message.content.toLowerCase().split(/\s+/g)]
-			const pack = { client: this.client, message, prefix: PREFIX, command, args, commands: this.commands, Event: this, Documents }
+			const pack = { client: this.client, message, prefix: PREFIX, command, args, commands: this.commands, options: { ignore, owners, commandsDir }, Event: this, Documents }
 
 			listener(pack)
 

@@ -2,8 +2,54 @@ const Documents = require('./Documents')
 const { Client } = require('discord.js')
 
 const _events = {
+	channelCreate: require('../Events/ChannelCreate'),
+	channelDelete: require('../Events/ChannelDelete'),
+	channelPinsUpdate: require('../Events/ChannelPinsUpdate'),
+	channelUpdate: require('../Events/ChannelUpdate'),
+	debug: require('../Events/Debug'),
+	emojiCreate: require('../Events/EmojiCreate'),
+	emojiDelete: require('../Events/EmojiDelete'),
+	emojiUpdate: require('../Events/EmojiUpdate'),
+	error: require('../Events/Error'),
+	guildBanAdd: require('../Events/GuildBanAdd'),
+	guildBanRemove: require('../Events/GuildBanRemove'),
+	guildCreate: require('../Events/GuildCreate'),
+	guildDelete: require('../Events/GuildDelete'),
+	guildIntegrationsUpdate: require('../Events/GuildIntegrationsUpdate'),
+	guildMemberAdd: require('../Events/GuildMemberAdd'),
+	guildMemberAvailable: require('../Events/GuildMemberAvailable'),
+	guildMemberRemove: require('../Events/GuildMemberRemove'),
+	guildMemberSpeaking: require('../Events/GuildMemberSpeaking'),
+	guildMemberUpdate: require('../Events/GuildMemberUpdate'),
+	guildMembersChunk: require('../Events/GuildMembersChunk'),
+	guildUnavailable: require('../Events/GuildUnavailable'),
+	guildUpdate: require('../Events/GuildUpdate'),
+	invalidated: require('../Events/Invalidated'),
+	inviteCreate: require('../Events/InviteCreate'),
+	inviteDelete: require('../Events/InviteDelete'),
+	message: require('../Events/Message'),
+	messageDelete: require('../Events/MessageDelete'),
+	messageDeleteBulk: require('../Events/MessageDeleteBulk'),
+	messageReactionAdd: require('../Events/MessageReactionAdd'),
+	messageReactionRemove: require('../Events/MessageReactionRemove'),
+	messageReactionRemoveAll: require('../Events/MessageReactionRemoveAll'),
+	messageReactionRemoveEmoji: require('../Events/MessageReactionRemoveEmoji'),
+	messageUpdate: require('../Events/MessageUpdate'),
+	presenceUpdate: require('../Events/PresenceUpdate'),
+	rateLimit: require('../Events/RateLimit'),
 	ready: require('../Events/Ready'),
-	message: require('../Events/Message')
+	roleCreate: require('../Events/RoleCreate'),
+	roleDelete: require('../Events/RoleDelete'),
+	roleUpdate: require('../Events/RoleUpdate'),
+	shardDisconnect: require('../Events/ShardDisconnect'),
+	shardError: require('../Events/ShardError'),
+	shardReady: require('../Events/ShardReady'),
+	shardResume: require('../Events/ShardResume'),
+	typingStart: require('../Events/TypingStart'),
+	userUpdate: require('../Events/UserUpdate'),
+	voiceStateUpdate: require('../Events/VoiceStateUpdate'),
+	warn: require('../Events/Warn'),
+	webhookUpdate: require('../Events/WebhookUpdate')
 }
 
 module.exports = class Echidna {
@@ -48,6 +94,6 @@ module.exports = class Echidna {
 		if (!result) throw Error(`"${event}" event is not supported`)
 		if (!listener) listener = () => null
 		if (typeof listener != 'function') throw Error('listener must be a function')
-		return new _events[event](this.client, listener, Object.assign(options, this.options), { Documents: this.documents })
+		return new _events[event](listener, Object.assign(options, this.options), { client: this.client, Documents: this.documents })
 	}
 }

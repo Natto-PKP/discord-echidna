@@ -1,9 +1,10 @@
 module.exports = class ReadyEvent {
 	/**
-     * @param {Object} client 
-     * @param {Function} listener 
-     */
-	constructor (client, listener, options, { Documents }) {
+	 * @param {*} listener 
+	 * @param {*} options 
+	 * @param {*} param3 
+	 */
+	constructor (listener, options, { client, Documents }) {
 		this.client = client
 		client.on('ready', () => listener({ client: this.client, Event: this, Documents }))
 	}
