@@ -10,13 +10,6 @@ module.exports = class DocumentManager {
 		this.path = path
 	}
 
-	/**
-	 * @returns
-	 */
-	exist () {
-		return existsSync(this.path)
-	}
-
 	save () {
 		if (!this.exist()) throw Error('this file no longer exists')
 		writeFileSync(this.path, JSON.stringify(this.content))

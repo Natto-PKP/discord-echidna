@@ -23,6 +23,19 @@ module.exports = class Documents {
 	}
 
 	/**
+	 * @param {String} ID 
+	 * @param {String} name 
+	 * @returns
+	 */
+	exist (ID, name) {
+		if (!ID || typeof ID != 'string') throw Error('ID must be a string')
+		if (!name || typeof name != 'string') throw Error('name must be a string')
+		const model = this.models.table.find((obj) => obj.name == name.replace(/\s+/g, '-'))
+		if (!model) throw Error(`${name.replace(/\s+/g, '-')} model does not exist - use <Documents>.models.add() for add a model`)
+		return existsSync(`${this.path}/${model.name}`) && existsSync(`${this.path}/${model.name}/${ID}.json`)
+	}
+
+	/**
      * @param {String} ID 
      * @param {String} name 
      * @returns 
