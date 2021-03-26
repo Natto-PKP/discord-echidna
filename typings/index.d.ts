@@ -8,7 +8,7 @@ declare module 'discord-echidna' {
 		public client: Client
 		public documents: Documents 
 		public options: BaseOptions
-		public on<K extends keyof ListenerParams> (event: K, listener?: (params: ListenerParams[K]) => void, options?: ListenerOptions[K]): Events[K]
+		public on<K extends keyof ListenerParams> (event: K, listener?: (params: ListenerParams[K]) => void, options?: ListenerOptions[K]): ListenerParams[K]['Event']
 	}
 
 	export class Documents {
@@ -33,8 +33,8 @@ declare module 'discord-echidna' {
 
 	export class DocumentManager {
 		constructor (object: Object)
-		public content: Object
-		public default: Object
+		public content: Object | Array<any>
+		public default: Object | Array<any>
 		public path: String
 		public delete (): void
 		public save (): void
@@ -307,11 +307,6 @@ declare module 'discord-echidna' {
 
 	type EchidnaFlags = 'owner'
 
-	interface Events {
-		ready: ReadyEvent
-		message: MessageEvent
-	}
-
 	interface ListenerOptions {  
 		channelCreate: {}
 		channelDelete: {}
@@ -381,15 +376,15 @@ declare module 'discord-echidna' {
 		guildMemberAdd: { client?: Client; member?: GuildMember; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: GuildMemberAddEvent; Documents?: Documents }
 		guildMemberAvailable: { client?: Client; member?: GuildMember; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: GuildMemberAvailableEvent; Documents?: Documents }
 		guildMemberRemove: { client?: Client; member?: GuildMember; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: GuildMemberRemoveEvent; Documents?: Documents }
-		guildMembersChunk: { client?: Client; members?: Collection<Snowflake, GuildMember>; guild?: Guild; chunk?: { index?: Number; count?: Number; nonce?: String? }; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: GuildMemberRemoveEvent; Documents?: Documents }
+		guildMembersChunk: { client?: Client; members?: Collection<Snowflake, GuildMember>; guild?: Guild; chunk?: { index?: Number; count?: Number; nonce?: String }; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: GuildMemberRemoveEvent; Documents?: Documents }
 		guildMemberSpeaking: { client?: Client; member?: GuildMember; readonly speaking?: Speaking; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: GuildMemberSpeakingEvent; Documents?: Documents }
 		guildMemberUpdate: { client?: Client; oldMember?: GuildMember; newMember?: GuildMember; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: GuildMemberUpdateEvent; Documents?: Documents }
 		guildUnavailable: { client?: Client; guild?: Guild; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: GuildUnavailableEvent; Documents?: Documents }
-		guildUpdate: { client?: Client; oldGuild?: Guild; newGuild?: Guild; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: GuildUpdate; Documents?: Documents }
+		guildUpdate: { client?: Client; oldGuild?: Guild; newGuild?: Guild; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: GuildUpdateEvent; Documents?: Documents }
 		invalidated: { client?: Client; Event?: InvalidatedEvent }
 		inviteCreate: { client?: Client; invite?: Invite, options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: InviteCreateEvent; Documents?: Documents }
 		inviteDelete: { client?: Client; invite?: Invite, options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: InviteDeleteEvent; Documents?: Documents }
-		message: { client?: Client; message?: Message; prefix?: String; command?: String; args?: Array<String>; Commands?: CommandsManager; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: MessageEvent; Documents: Documents? } // NEW : options
+		message: { client?: Client; message?: Message; prefix?: String; command?: String; args?: Array<String>; Commands?: CommandsManager; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: MessageEvent; Documents?: Documents } // NEW : options
 		messageDelete: { client?: Client; message?: Message; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: MessageDeleteEvent; Documents?: Documents }
 		messageDeleteBulk: { client?: Client; messages?: Collection<Snowflake, Message>; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: MessageDeleteEvent; Documents?: Documents }
 		messageReactionAdd: { client?: Client; messageReaction?: MessageReaction; user?: User; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: MessageReactionAddEvent; Documents?: Documents }
@@ -405,7 +400,7 @@ declare module 'discord-echidna' {
 		roleUpdate: { client?: Client; oldRole?: Role; newRole?: Role; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: RoleUpdateEvent; Documents?: Documents }
 		shardDisconnect: { client?: Client; event?: CloseEvent; id?: Number; Event?: RateLimitEvent }
 		shardError: { client?: Client; error?: Error; shardID?: Number; Event?: RateLimitEvent }
-		shardReady: { client?: Client; id?: Number; unavailableGuilds?: Set<String>?; Event?: RateLimitEvent, Documents?: Documents }
+		shardReady: { client?: Client; id?: Number; unavailableGuilds?: Set<String>; Event?: RateLimitEvent, Documents?: Documents }
 		shardResume: { client?: Client; id?: Number; replayedEvents?: Number; Event?: RateLimitEvent, Documents?: Documents }
 		typingStart: { client?: Client; channel?: Channel; user?: User; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: TypingStartEvent; Documents?: Documents }
 		userUpdate: { client?: Client; oldUser?: User; newUser?: User; options?: { ignore?: BaseOptions['ignore']; owners?: Array<String> }; Event?: UserUpdateEvent; Documents?: Documents }

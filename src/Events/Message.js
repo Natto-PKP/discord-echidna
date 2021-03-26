@@ -34,7 +34,7 @@ module.exports = class MessageEvent {
 			if (!message || (message && ((message.author && ignore.users.includes(message.author.id)) || (message.guild && ignore.guilds.includes(message.guild.id))))) return
 
 			const reg = message.content.toLowerCase().match(`^(<@!?${client.user.id}> (?= *)|${prefix}(?=[A-Za-z-]))`)
-			const [PREFIX, command, ...args] = reg ? [reg[0], ...message.content.toLowerCase().slice(reg[0].length).trim().split(/\s+/g)] : [, ...message.content.toLowerCase().split(/\s+/g)]
+			const [PREFIX, command, ...args] = reg ? [reg[0], ...message.content.slice(reg[0].length).trim().split(/\s+/g)] : [, ...message.content.split(/\s+/g)]
 			const pack = { client: this.client, message, prefix: PREFIX, command, args, commands: this.commands, options: { ignore, owners, commandsDir }, Event: this, Documents }
 
 			listener(pack)

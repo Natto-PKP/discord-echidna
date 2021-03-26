@@ -11,7 +11,7 @@ module.exports = class DocumentManager {
 	}
 
 	save () {
-		if (!this.exist()) throw Error('this file no longer exists')
+		if (!existsSync(this.path)) throw Error('this file no longer exists')
 		writeFileSync(this.path, JSON.stringify(this.content))
 	}
 
@@ -24,6 +24,6 @@ module.exports = class DocumentManager {
 	}
 
 	delete () {
-		if (this.exist()) unlinkSync(this.path)
+		if (existsSync(this.path)) unlinkSync(this.path)
 	}
 }
