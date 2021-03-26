@@ -17,7 +17,7 @@ echidna.on('ready', ({ client }) => {
   console.log(`${client.user.tag} is ready!`)
 })
 
-  // Message event - Get command manager from event
+  // Message event - Get CommandsManager from event
 const { commands } = echidna.on('message', ({ message, command, args }) => {
   if (command == 'you') return message.react('💌')
   if (command == 'me' && args[0] == '?') return message.react('💤')
@@ -25,7 +25,7 @@ const { commands } = echidna.on('message', ({ message, command, args }) => {
 
 // Create a command
 commands.create(
-  // Take many arguments
+  // Has many arguments
   ({ message }) => {
     message.channel.send(message.author.displayAvatarURL())
   },
