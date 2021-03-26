@@ -2,7 +2,7 @@
 **Install**: `npm install discord-echidna` | `npm i discord-echidna`
 
 > `Documents` > Integrated and modular database. (JSON)<br>
-> `Commands` > Simple and efficient order management.
+> `Commands` > Simple and efficient commands management.
 
 # Example usage
 
@@ -17,7 +17,7 @@ echidna.on('ready', ({ client }) => {
   console.log(`${client.user.tag} is ready!`)
 })
 
-// Message event - Take CommandsManager of the event
+  // Message event - Get command manager from event
 const { commands } = echidna.on('message', ({ message, command, args }) => {
   if (command == 'you') return message.react('💌')
   if (command == 'me' && args[0] == '?') return message.react('💤')
@@ -85,7 +85,7 @@ commands.create(
 > > `return` [Events](#events)
 
 ### `class` Documents
-> Manage your database document.<br>
+> Manage your database documents.<br>
 > `property` **models** > [ModelsManager](#class-modelsmanager)<br>
 > `property` **path** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
 > 
@@ -98,7 +98,7 @@ commands.create(
 > > `param` **modelName** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) - Add a model: [\<ModelsManager>.add()](#method-modelsmanager.addname-base)<br>
 > 
 > #### `method` **\<DocumentManager>**.exist(ID, modelName)
-> > Check if this document exist.<br>
+> > Check if this document exists.<br>
 > > `param` **ID** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
 > > `param` **modelName** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) - Add a model: [\<ModelsManager>.add()](#method-modelsmanager.addname-base)<br>
 > > `return` [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)<br>
@@ -121,7 +121,7 @@ commands.create(
 > `property` **cooldowns** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)<br>
 > 
 > #### `method` **\<CommandsManager>**.create(exec, options, help)
-> > Create a new command in commandsManager.
+> > Create a new command in CommandsManager.
 > > ```js
 > > CommandsManager.create(
 > >   ({ client }) => console.log(client.guilds.cache.size + ' guilds'),
@@ -153,7 +153,7 @@ commands.create(
 
 
 ### `class` DocumentManager
-> An open document of your database.<br>
+> An opened document of your database.<br>
 > `property` **content** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<br>
 > `property` **default** > [Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object) | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<br>
 > `property` **path** > [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)<br>
@@ -169,7 +169,7 @@ commands.create(
 > > `return` [DocumentManager](#class-documentmanager)
 
 ### `class` ModelsManager
-> Manage documents models.<br>
+> Manage document models.<br>
 > `property` **table** [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[\<Object>](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)> 
 > 
 > #### `method` **\<ModelsManager>**.add(name, base)
