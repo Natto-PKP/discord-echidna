@@ -1,14 +1,17 @@
-module.exports = class MessageReactionRemoveEmojiEvent {
-	/**
-     * @param {*} listener 
-     * @param {*} param2 
-     * @param {*} Documents 
-     */
-	constructor (listener, { ignore, owners }, { client, Documents }) {
-		this.client = client
-		client.on('messageReactionRemoveEmoji', (messageReaction) => {
-			if (messageReaction && messageReaction.message && messageReaction.message.guild && ignore.guilds.includes(messageReaction.message.guild.id)) return
-			listener({ client: this.client, messageReaction, options: { ignore, owners }, Event: this, Documents })
-		})
-	}
+const Database = require('../Structures/Database')
+
+module.exports = {
+	manager: class MessageReactionRemoveEmojiEvent {
+		/**
+         * @param {Function} listener 
+         * @param {Object} param1 
+         */
+		constructor (listener, { client, ignore, owners }) {
+			client.on('messageReactionRemoveEmoji', (reaction) => {
+				if (reaction && reaction.message && reaction.message.guild && ignore.guilds.includes(reaction.message.guild.id)) return
+				listener({ client, reaction, options: { ignore, owners }, Database })
+			})
+		}
+	},
+	defaultOptions: {}
 }

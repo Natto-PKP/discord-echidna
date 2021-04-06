@@ -1,8 +1,9 @@
+const { TypeError, Error } = require('../Errors/EchidnaError')
 const _permissions = require('../permissions.json')
 
-module.exports = class CommandsManager {
+module.exports = new class Commands {
 	constructor () {
-		this.table = []
+		this.array = []
 		this.cooldowns = {}
 	}
 
@@ -28,29 +29,29 @@ module.exports = class CommandsManager {
      * @param {Object[]} [options.deny.roles]
      * @param {any} help  Object custom for help command
      */
-	create (exec, options, help) {
-		if (!exec || typeof exec != 'function') throw Error('exec must be a function')
+	create (exec, options, help = {}) {
+		if (!exec || typeof exec != 'function') throw new TypeError('ECHIDNA_INVALID_OPTION', 'exec', 'function')
 		if (!options || Array.isArray(options) || typeof options != 'object') options = {}
 
-		if (!options.name || typeof options.name != 'string') throw Error('options.name must be a string')
-		if (options.name.length < 2) throw Error('options.name must contain more than 2 characters')
-		if (/\s/.test(options.name)) throw Error('options.name must not contain spaces')
+		if (!options.name || typeof options.name != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'options.name', 'string')
+		if (options.name.length < 2) throw new Error('ECHIDNA_INVALID_LENGTH', 'string', 'options.name', '1')
+		if (/\s/.test(options.name)) throw new Error('ECHIDNA_CONTAIN_SPACE', 'options.name')
 		if (!options.aliases || !Array.isArray(options.aliases)) options.aliases = []
 		options.aliases.some((str) => {
-			if (typeof str != 'string') throw Error('alias of options.aliases must be a string')
-			if (str.length < 2) throw Error('alias of options.aliases must contain more than 2 characters')
-			if (/\s/.test(str)) throw Error('alias of options.aliases must not contain spaces')
+			if (typeof str != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'options.aliases[*]', 'string')
+			if (str.length < 2) throw new Error('ECHIDNA_INVALID_LENGTH', 'string', 'options.aliases[*]', '1')
+			if (/\s/.test(str)) throw new Error('ECHIDNA_CONTAIN_SPACE', 'options.aliases[*]')
 		})
 
-		if (this.exist(options.name, ...options.aliases)) throw Error('this name|alias is already used')
+		if (this.exist(options.name, ...options.aliases)) throw new Error('ECHIDNA_NAME_TAKEN', 'Command')
 
 		if (!options.cooldown) options.cooldown = 1
-		if (typeof options.cooldown != 'number') throw Error('options.cooldown must be a number')
+		if (typeof options.cooldown != 'number') throw new TypeError('ECHIDNA_INVALID_OPTION', 'options.cooldown', 'number')
 
 		if (!options.permissions || Array.isArray(options.permissions) || typeof options.permissions != 'object') options.permissions = {}
 		if (!options.permissions.users || !Array.isArray(options.permissions.users)) options.permissions.users = []
 		if (!options.permissions.client || !Array.isArray(options.permissions.client)) options.permissions.client = []
-		if ([...options.permissions.client, ...options.permissions.users].some((e) => !_permissions.includes(e))) throw Error('a permission is not a valid Discord permissions')
+		if ([...options.permissions.client, ...options.permissions.users].some((e) => !_permissions.includes(e))) throw new Error('ECHIDNA_INVALID_PERM')
 		if (!options.permissions.flags || !Array.isArray(options.permissions.flags)) options.permissions.flags = []
 
 		if (!options.allow || Array.isArray(options.allow) || typeof options.allow != 'object') options.allow = {}
@@ -65,7 +66,7 @@ module.exports = class CommandsManager {
 		if (!options.deny.guilds || !Array.isArray(options.deny.guilds)) options.deny.guilds = []
 		if (!options.deny.roles || !Array.isArray(options.deny.roles)) options.deny.roles = []
 
-		this.table.push({ exec, options, help })
+		this.array.push({ exec, options, help })
 	}
 
 	/**
@@ -73,14 +74,14 @@ module.exports = class CommandsManager {
      * @returns
      */
 	get (name) {
-		return this.table.find(({ options }) => [options.name, ...options.aliases].includes(name))
+		return this.array.find(({ options }) => [options.name, ...options.aliases].includes(name))
 	}
 
 	/**
-     * @param  {...any} names 
+     * @param  {...Array<String>} names 
      * @returns 
      */
 	exist (...names) {
-		return this.table.some(({ options: { name, aliases } }) => [name, ...aliases].some((str) => names.includes(str)))
+		return this.array.some(({ options: { name, aliases } }) => [name, ...aliases].some((str) => names.includes(str)))
 	}
-}
+}()

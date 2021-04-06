@@ -1,11 +1,14 @@
-module.exports = class GuildCreateEvent {
-	/**
-     * @param {*} listener 
-     * @param {*} param2 
-     * @param {*} Documents 
-     */
-	constructor (listener, { ignore, owners }, { client, Documents }) {
-		this.client = client
-		client.on('guildCreate', (guild) => listener({ client: this.client, guild, options: { ignore, owners }, Event: this, Documents }))
-	}
+const Database = require('../Structures/Database')
+
+module.exports = {
+	manager: class GuildCreateEvent {
+		/**
+         * @param {Function} listener 
+         * @param {Object} param1 
+         */
+		constructor (listener, { client }) {
+			client.on('guildCreate', (guild) => listener({ client, guild, Database }))
+		}
+	},
+	defaultOptions: {}
 }

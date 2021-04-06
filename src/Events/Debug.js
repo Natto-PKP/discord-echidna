@@ -1,10 +1,12 @@
-module.exports = class DebugEvent {
-	/**
-	 * @param {*} listener 
-	 * @param {*} options 
-	 * @param {*} param3 
-	 */
-	constructor (listener, options, { client }) {
-		client.on('debug', () => listener({ client: this.client, Event: this }))
-	}
+module.exports = {
+	manager: class DebugEvent {
+		/**
+         * @param {Function} listener 
+         * @param {Object} param1 
+         */
+		constructor (listener, { client }) {
+			client.on('debug', () => listener({ client }))
+		}
+	},
+	defaultOptions: {}
 }

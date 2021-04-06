@@ -1,14 +1,17 @@
-module.exports = class GuildUpdateEvent {
-	/**
-     * @param {*} listener 
-     * @param {*} param2 
-     * @param {*} Documents 
-     */
-	constructor (listener, { ignore, owners }, { client, Documents }) {
-		this.client = client
-		client.on('guildUpdate', (oldGuild, newGuild) => {
-			if (oldGuild && ignore.guilds.includes(oldGuild.id)) return
-			listener({ client: this.client, oldGuild, newGuild, options: { ignore, owners }, Event: this, Documents })
-		})
-	}
+const Database = require('../Structures/Database')
+
+module.exports = {
+	manager: class GuildUpdateEvent {
+		/**
+         * @param {Function} listener 
+         * @param {Object} param1 
+         */
+		constructor (listener, { client, ignore, owners }) {
+			client.on('guildUpdate', (oldGuild, newGuild) => {
+				if (oldGuild && ignore.guilds.includes(oldGuild.id)) return
+				listener({ client, oldGuild, newGuild, options: { ignore, owners }, Database })
+			})
+		}
+	},
+	defaultOptions: {}
 }

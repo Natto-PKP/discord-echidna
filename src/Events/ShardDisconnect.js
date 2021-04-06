@@ -1,10 +1,12 @@
-module.exports = class ShardDisconnectEvent {
-	/**
-     * @param {*} listener 
-     * @param {*} param2 
-     * @param {*} Documents 
-     */
-	constructor (listener, options, { client }) {
-		client.on('shardDisconnect', (event, id) => listener({ client: this.client, event, id, Event: this }))
-	}
+module.exports = {
+	manager: class ShardDisconnectEvent {
+		/**
+         * @param {Function} listener 
+         * @param {Object} param1 
+         */
+		constructor (listener, { client }) {
+			client.on('shardDisconnect', (event, id) => listener({ client, event, id }))
+		}
+	},
+	defaultOptions: {}
 }

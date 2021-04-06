@@ -1,15 +1,18 @@
-module.exports = class PresenceUpdateEvent {
-	/**
-     * @param {*} listener 
-     * @param {*} param2 
-     * @param {*} Documents 
-     */
-	constructor (listener, { ignore, owners }, { client, Documents }) {
-		this.client = client
-		client.on('presenceUpdate', (oldPresence, newPresence) => {
-			if (newPresence && newPresence.guild && ignore.guilds.includes(newPresence.guild.id)) return
-			if (newPresence && newPresence.member && ignore.users.includes(newPresence.member.id)) return
-			listener({ client: this.client, oldPresence, newPresence, options: { ignore, owners }, Event: this, Documents })
-		})
-	}
+const Database = require('../Structures/Database')
+
+module.exports = {
+	manager: class PresenceUpdateEvent {
+		/**
+         * @param {Function} listener 
+         * @param {Object} param1 
+         */
+		constructor (listener, { client, ignore, owners }) {
+			client.on('presenceUpdate', (oldPresence, newPresence) => {
+				if (oldPresence && oldPresence.guild && ignore.guilds.includes(oldPresence.guild.id)) return
+				if (oldPresence && oldPresence.member && ignore.users.includes(oldPresence.member.id)) return
+				listener({ client, oldPresence, newPresence, options: { ignore, owners }, Database })
+			})
+		}
+	},
+	defaultOptions: {}
 }

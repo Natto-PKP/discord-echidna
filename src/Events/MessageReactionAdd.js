@@ -1,15 +1,18 @@
-module.exports = class MessageReactionAddEvent {
-	/**
-     * @param {*} listener 
-     * @param {*} param2 
-     * @param {*} Documents 
-     */
-	constructor (listener, { ignore, owners }, { client, Documents }) {
-		this.client = client
-		client.on('messageReactionAdd', (messageReaction, user) => {
-			if (messageReaction && messageReaction.message && messageReaction.message.guild && ignore.guilds.includes(messageReaction.message.guild.id)) return
-			if (user && ignore.users.includes(user.id)) return
-			listener({ client: this.client, messageReaction, user, options: { ignore, owners }, Event: this, Documents })
-		})
-	}
+const Database = require('../Structures/Database')
+
+module.exports = {
+	manager: class MessageReactionAddEvent {
+		/**
+         * @param {Function} listener 
+         * @param {Object} param1 
+         */
+		constructor (listener, { client, ignore, owners }) {
+			client.on('messageReactionAdd', (reaction, user) => {
+				if (reaction && reaction.message && reaction.message.guild && ignore.guilds.includes(reaction.message.guild.id)) return
+				if (user && ignore.users.includes(user.id)) return
+				listener({ client, reaction, user, options: { ignore, owners }, Database })
+			})
+		}
+	},
+	defaultOptions: {}
 }

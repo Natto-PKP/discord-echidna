@@ -1,10 +1,12 @@
-module.exports = class ShardReadyEvent {
-	/**
-     * @param {*} listener 
-     * @param {*} param2 
-     * @param {*} Documents 
-     */
-	constructor (listener, options, { client, Documents }) {
-		client.on('shardReady', (id, unavailableGuilds) => listener({ client: this.client, id, unavailableGuilds, Event: this, Documents }))
-	}
+module.exports = {
+	manager: class ShardReadyEvent {
+		/**
+         * @param {Function} listener 
+         * @param {Object} param1 
+         */
+		constructor (listener, { client }) {
+			client.on('shardReady', (id, unavailableGuilds) => listener({ client, id, unavailableGuilds }))
+		}
+	},
+	defaultOptions: {}
 }

@@ -1,9 +1,8 @@
 module.exports = {
-	// Structures
+	Collections: require('./Structures/Collections'),
+	Commands: require('./Structures/Commands'),
+	Database: require('./Structures/Database'),
 	Echidna: require('./Structures/Echidna'),
-	Documents: require('./Structures/Documents'),
 
-	// Managers
-	CommandsManager: require('./Managers/Commands'),
-	Models: require('./Managers/Models')
+	UTIL: require('./Utils')
 }
