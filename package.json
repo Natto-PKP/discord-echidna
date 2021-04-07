@@ -1,6 +1,6 @@
 {
 	"name": "discord-echidna",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "A structure for discord.js bot",
 	"main": "./src/index.js",
 	"types": "./typings/index.d.ts",
@@ -12,7 +12,7 @@
 		"url": "git+https://github.com/Natto-PKP/discord-echidna.git"
 	},
 	"author": "Nat'",
-	"license": "ISC",
+	"licenses": [{ "type": "Apache-2.0", "url": "http://www.apache.org/licenses/LICENSE-2.0" }],
 	"bugs": {
 		"url": "https://github.com/Natto-PKP/discord-echidna/issues"
 	},
