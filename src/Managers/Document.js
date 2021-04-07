@@ -61,13 +61,16 @@ module.exports = class Document {
 								else if (typeof acc[prop][index] == 'object') return acc[prop][index] = !Array.isArray(source) ? Document.#update(acc[prop][index], source): source
 								else return acc[prop][index] = source
 							} else return acc[prop] = [...acc[prop], ...(Array.isArray(source) ? source: [source])]
-						}
-						if (typeof acc[prop] == 'object') return acc[prop] = Document.#update(acc[prop], source)
-						return acc[prop] = source
+						} else if (typeof acc[prop] == 'object') return acc[prop] = Document.#update(acc[prop], source)
+						else return acc[prop] = source
 					} else return acc[prop] = source
 				} else {
-					if(!Object.hasOwnProperty.call(acc, prop)) return acc[prop] = {}
+					if (Object.hasOwnProperty.call(acc, prop)) {
+						if (typeof acc[prop] !== 'object') throw new Error('ECHIDNA_INVALID_OPTION', prop, 'object|array')
+						else return acc[prop]
+					} else return acc[prop] = {}
 				}
+				
 			}, target)
 		} else {
 			for (const [key, value] of Object.entries(source)) {
