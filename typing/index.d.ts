@@ -248,7 +248,7 @@ declare module 'discord-echidna' {
 
 	interface CommandsOptions {
 		name: String
-		aliases?: Array<String>
+		aliases?: Array<String> | RegExp
 		cooldown?: Number
 		permissions?: Permissions
 		allow?: AllowedOrDenyID
@@ -430,34 +430,34 @@ declare module 'discord-echidna' {
 
 declare module 'discord.js' {
 	interface ChannelManager {
-		public select(search: String, options: { strict: Boolean; type: String | Boolean }): Channel
+		select(search: String, options: { strict: Boolean; type: String | Boolean }): Channel
 	}
 
 	interface GuildChannelManager {
-		public select(search: String, options: { strict: Boolean; type: String | Boolean }): Channel
+		select(search: String, options: { strict: Boolean; type: String | Boolean }): Channel
 	}
 
 	interface GuildEmojiManager {
-		public select(search: String, options: { strict: Boolean }): Emoji
+		select(search: String, options: { strict: Boolean }): Emoji
 	}
 
 	interface GuildManager {
-		public select(search: String, options: { strict: Boolean }): Guild
+		select(search: String, options: { strict: Boolean }): Guild
 	}
 
 	interface GuildMemberManager {
-		public select(search: String, options: { strict: Boolean }): GuildMember
+		select(search: String, options: { strict: Boolean }): GuildMember
 	}
 
 	interface GuildMemberRoleManager {
-		public select(search: String, options: { strict: Boolean }): Role
+		select(search: String, options: { strict: Boolean }): Role
 	}
 
 	interface RoleManager {
-		public select(search: String, options: { strict: Boolean }): Role
+		select(search: String, options: { strict: Boolean }): Role
 	}
 
 	interface UserManager {
-		public select(search: String, options: { strict: Boolean }): User
+		select(search: String, options: { strict: Boolean }): User
 	}
 }

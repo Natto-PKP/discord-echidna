@@ -1,4 +1,5 @@
 const { TypeError, Error } = require('../Errors/EchidnaError')
+const Enregex = require('enregex')
 const _permissions = require('../permissions.json')
 
 module.exports = new class Commands {
@@ -11,7 +12,7 @@ module.exports = new class Commands {
      * @param {Function} exec 
      * @param {any} options 
      * @param {String} [options.name] 
-     * @param {Object[]} [options.aliases] 
+     * @param {Object[]|RegExp} [options.aliases] 
      * @param {Number} [options.cooldown] 
      * @param {any} [options.permissions]
      * @param {Object[]} [options.permissions.users] Table of users permissions required
@@ -36,10 +37,11 @@ module.exports = new class Commands {
 		if (!options.name || typeof options.name != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'options.name', 'string')
 		if (options.name.length < 2) throw new Error('ECHIDNA_INVALID_LENGTH', 'string', 'options.name', '1')
 		if (/\s/.test(options.name)) throw new Error('ECHIDNA_CONTAIN_SPACE', 'options.name')
-		if (!options.aliases || !Array.isArray(options.aliases)) options.aliases = []
+		if (!options.aliases || !(Array.isArray(options.aliases) || options.aliases instanceof RegExp)) options.aliases = []
+		if (options.aliases instanceof RegExp) options.aliases = Enregex(options.aliases).array()
 		options.aliases.some((str) => {
-			if (typeof str != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'options.aliases[*]', 'string')
-			if (str.length < 2) throw new Error('ECHIDNA_INVALID_LENGTH', 'string', 'options.aliases[*]', '1')
+			if (typeof str != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', `options.aliases[${str}]`, 'string')
+			if (str.length < 2) throw new Error('ECHIDNA_INVALID_LENGTH', 'string', `options.aliases[${str}]`, '1')
 			if (/\s/.test(str)) throw new Error('ECHIDNA_CONTAIN_SPACE', 'options.aliases[*]')
 		})
 
