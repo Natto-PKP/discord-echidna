@@ -24,7 +24,7 @@ declare module 'discord-echidna' {
 	}
 
 	export class Echidna {
-		constructor (token: String, EchidnaOptions?: { client?: ClientOptions; ignore?: Ignore; owners?: Array<String> })
+		constructor (token: String, EchidnaOptions?: EchidnaOptions)
 		public on<K extends keyof Events> (event: K, listener?: (params: Listeners[K]) => void, EventOptions?: EventsOptions[K]): Events[K]
 	}
 
@@ -255,6 +255,14 @@ declare module 'discord-echidna' {
 		deny?: AllowedOrDenyID
 	}
 
+	type EchidnaFlags = 'owner'
+
+	interface EchidnaOptions {
+		client?: ClientOptions
+		ignore?: Ignore
+		owners?: Array<String>
+	}
+
 	interface Events {
 		channelCreate: ChannelCreateEvent
 		channelDelete: ChannelDeleteEvent
@@ -357,8 +365,6 @@ declare module 'discord-echidna' {
 		webhookUpdate: Object
 	}
 
-	type EchidnaFlags = 'owner'
-
 	interface Ignore {
 		users?: Array<String>
 		guilds?: Array<String>
@@ -419,5 +425,39 @@ declare module 'discord-echidna' {
 		users?: Array<PermissionString>
 		client?: Array<PermissionString>
 		flags?: Array<EchidnaFlags>
+	}
+}
+
+declare module 'discord.js' {
+	interface ChannelManager {
+		public select(search: String, options: { strict: Boolean; type: String | Boolean }): Channel
+	}
+
+	interface GuildChannelManager {
+		public select(search: String, options: { strict: Boolean; type: String | Boolean }): Channel
+	}
+
+	interface GuildEmojiManager {
+		public select(search: String, options: { strict: Boolean }): Emoji
+	}
+
+	interface GuildManager {
+		public select(search: String, options: { strict: Boolean }): Guild
+	}
+
+	interface GuildMemberManager {
+		public select(search: String, options: { strict: Boolean }): GuildMember
+	}
+
+	interface GuildMemberRoleManager {
+		public select(search: String, options: { strict: Boolean }): Role
+	}
+
+	interface RoleManager {
+		public select(search: String, options: { strict: Boolean }): Role
+	}
+
+	interface UserManager {
+		public select(search: String, options: { strict: Boolean }): User
 	}
 }

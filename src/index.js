@@ -1,3 +1,6 @@
+// _proto
+require('./_proto/Discord')
+
 module.exports = {
 	Collections: require('./Structures/Collections'),
 	Commands: require('./Structures/Commands'),
