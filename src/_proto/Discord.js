@@ -13,8 +13,6 @@ Discord.UserManager.prototype.select = function (search, { strict = false } = {}
 	return strict ? this.cache.get(search.replace(/\D+/g, '')) : this.cache.find((user) => user.id == search.replace(/\D+/g, '') || user.tag.toLowerCase().includes(search.toLowerCase()))
 }
 
-// new
-
 // GuildMemberManager
 /**
  * @param {String} search 
