@@ -98,3 +98,11 @@ Discord.GuildEmojiManager.prototype.select = function (search, { strict = false 
 	if (!search || typeof search != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'search', 'string')
 	return strict ? this.cache.get(search.replace(/\D+/g, '')) : this.cache.find((emoji) => emoji.id == search.replace(/\D+/g, '') || emoji.name.toLowerCase().includes(search.toLowerCase()))
 }
+
+/*
+// Message
+Discord.Message.prototype.createPages = async function (content, { emojis = ['◀', '🔴', '▶'] } = {}) {
+	if (!emojis || !Array.isArray(emojis)) throw new TypeError('ECHIDNA_INVALID_OPTION', 'emojis', 'array')
+	if (emojis.length < 3) throw new Error('ECHIDNA_INVALID_LENGTH', 'array', 'emojis', 3)
+}
+*/

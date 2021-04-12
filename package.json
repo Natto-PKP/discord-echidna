@@ -1,6 +1,6 @@
 {
 	"name": "discord-echidna",
-	"version": "2.0.4",
+	"version": "2.0.5",
 	"description": "A structure for discord.js bot",
 	"main": "./src/index.js",
 	"types": "./typings/index.d.ts",
@@ -25,6 +25,6 @@
 	"keywords": ["discord", "bot", "client", "node", "discordapp", "echidna"],
 	"dependencies": {
 		"discord.js": "^12.5.1",
-		"enregex": "^1.6.4"
+		"enregex": "^1.7.0"
 	}
 }
