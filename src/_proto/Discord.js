@@ -3,39 +3,48 @@ const Discord = require('discord.js')
 
 // UserManager
 /**
+ * @async
  * @param {String} search 
  * @param {Object} param1 
  * @param {Boolean} [param1.strict]
- * @returns 
+ * @returns {Discord.User}
  */
-Discord.UserManager.prototype.select = function (search, { strict = false } = {}) {
+Discord.UserManager.prototype.select = async function (search, { strict = false } = {}) {
 	if (!search || typeof search != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'search', 'string')
-	return strict ? this.cache.get(search.replace(/\D+/g, '')) : this.cache.find((user) => user.id == search.replace(/\D+/g, '') || user.tag.toLowerCase().includes(search.toLowerCase()))
+	const result = strict ? this.cache.get(search.replace(/\D+/g, '')) : this.cache.find((user) => user.id == search.replace(/\D+/g, '') || user.tag.toLowerCase().includes(search.toLowerCase()))
+	return !result ? await this.fetch(search.replace(/\D+/g, ''), true, true) : result
 }
 
 // GuildMemberManager
 /**
+ * @async
  * @param {String} search 
  * @param {Object} param1 
  * @param {Boolean} [param1.strict]
- * @returns 
+ * @returns {Discord.GuildMember}
  */
-Discord.GuildMemberManager.prototype.select = function (search, { strict = false } = {}) {
+Discord.GuildMemberManager.prototype.select = async function (search, { strict = false } = {}) {
 	if (!search || typeof search != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'search', 'string')
-	return strict ? this.cache.get(search.replace(/\D+/g, '')) : this.cache.find((member) => member.id == search.replace(/\D+/g, '') || member.user.tag.toLowerCase().includes(search.toLowerCase()) || member.displayName.toLowerCase()).includes(search.toLowerCase())
+	let result = strict ? this.cache.get(search.replace(/\D+/g, '')) : this.cache.find((member) => member.id == search.replace(/\D+/g, '') || member.user.tag.toLowerCase().includes(search.toLowerCase()) || member.displayName.toLowerCase().includes(search.toLowerCase()))
+	if (!result) {
+		result = (await this.fetch({ user: search.replace(/\D+/g, ''), force: true })) || (strict && (await this.fetch({ query: search.split('#')[0], force: true })))
+		return (result instanceof Discord.Collection ? result.find((member) => member.user.tag.toLowerCase().includes(search.toLowerCase()) || member.displayName.toLowerCase().includes(search.toLowerCase())) : result) || undefined
+	} else return result
 }
 
 // ChannelManager
 /**
+ * @async
  * @param {String} search 
  * @param {Object} param1 
  * @param {Boolean} [param1.strict]
  * @param {String|Boolean} [param1.type]
- * @returns 
+ * @returns {Discord.Channel}
  */
-Discord.ChannelManager.prototype.select = function (search, { strict = false, type = false } = {}) {
+Discord.ChannelManager.prototype.select = async function (search, { strict = false, type = false } = {}) {
 	if (!search || typeof search != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'search', 'string')
-	return strict ? this.cache.get(search.replace(/\D+/g, '')) : this.cache.find((channel) => (type ? channel.type == `${type}`.toLowerCase() : true && (channel.id == search.replace(/\D+/g, '') || (channel.name && channel.name.toLowerCase().includes(search.toLowerCase())))))
+	const result = strict ? this.cache.get(search.replace(/\D+/g, '')) : this.cache.find((channel) => (type ? channel.type == `${type}`.toLowerCase() : true && (channel.id == search.replace(/\D+/g, '') || (channel.name && channel.name.toLowerCase().includes(search.toLowerCase())))))
+	return !result ? await this.fetch(search.replace(/\D+/g, ''), true, true) : result
 }
 
 // GuildChannelManager
@@ -44,7 +53,7 @@ Discord.ChannelManager.prototype.select = function (search, { strict = false, ty
  * @param {Object} param1 
  * @param {Boolean} [param1.strict]
  * @param {String|Boolean} [param1.type]
- * @returns 
+ * @returns {Discord.GuildChannel}
  */
 Discord.GuildChannelManager.prototype.select = function (search, { strict = false, type = false } = {}) {
 	if (!search || typeof search != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'search', 'string')
@@ -53,26 +62,30 @@ Discord.GuildChannelManager.prototype.select = function (search, { strict = fals
 
 // GuildManager
 /**
+ * @async
  * @param {String} search 
  * @param {Object} param1 
  * @param {Boolean} [param1.strict]
- * @returns 
+ * @returns {Discord.GuildManager}
  */
-Discord.GuildManager.prototype.select = function (search, { strict = false } = {}) {
+Discord.GuildManager.prototype.select = async function (search, { strict = false } = {}) {
 	if (!search || typeof search != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'search', 'string')
-	return strict ? this.cache.get(search.replace(/\D+/g, '')) : this.cache.find((guild) => guild.id == search.replace(/\D+/g, '') || guild.name.toLowerCase().includes(search.toLowerCase()))
+	const result = strict ? this.cache.get(search.replace(/\D+/g, '')) : this.cache.find((guild) => guild.id == search.replace(/\D+/g, '') || guild.name.toLowerCase().includes(search.toLowerCase()))
+	return !result ? await this.fetch(search.replace(/\D+/g, ''), true, true) : result
 }
 
 // RoleManager
 /**
+ * @async
  * @param {String} search 
  * @param {Object} param1 
  * @param {Boolean} [param1.strict]
- * @returns 
+ * @returns {Discord.Role}
  */
-Discord.RoleManager.prototype.select = function (search, { strict = false } = {}) {
+Discord.RoleManager.prototype.select = async function (search, { strict = false } = {}) {
 	if (!search || typeof search != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'search', 'string')
-	return strict ? this.cache.get(search.replace(/\D+/g, '')) : this.cache.find((role) => role.id == search.replace(/\D+/g, '') || role.name.toLowerCase().includes(search.toLowerCase()))
+	const result = strict ? this.cache.get(search.replace(/\D+/g, '')) : this.cache.find((role) => role.id == search.replace(/\D+/g, '') || role.name.toLowerCase().includes(search.toLowerCase()))
+	return !result ? await this.fetch(search.replace(/\D+/g, ''), true, true) : result
 }
 
 // GuildMemberRoleManager
@@ -80,7 +93,7 @@ Discord.RoleManager.prototype.select = function (search, { strict = false } = {}
  * @param {String} search 
  * @param {Object} param1 
  * @param {Boolean} [param1.strict]
- * @returns 
+ * @returns {Discord.Role}
  */
 Discord.GuildMemberRoleManager.prototype.select = function (search, { strict = false } = {}) {
 	if (!search || typeof search != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'search', 'string')
@@ -92,7 +105,7 @@ Discord.GuildMemberRoleManager.prototype.select = function (search, { strict = f
  * @param {String} search 
  * @param {Object} param1 
  * @param {Boolean} [param1.strict]
- * @returns 
+ * @returns {Discord.GuildEmoji}
  */
 Discord.GuildEmojiManager.prototype.select = function (search, { strict = false } = {}) {
 	if (!search || typeof search != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'search', 'string')
