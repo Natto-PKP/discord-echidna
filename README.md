@@ -95,3 +95,19 @@ Commands.create(
 // You can also directly enter an commands directory in the event message. Files.js will be automatically read.
 echidna.on('message', null, { commandsDir: './commands', prefix: '=' })
 ```
+
+## Use Discord.js Sharding
+```js
+// index.js
+const { ShardingManager } = require('discord.js')
+const manager = new ShardingManager('./app.js', { token: 'Your Discord bot Token' })
+
+manager.on('shardCreate', shard => console.log(`Launched shard ${shard.id}`))
+manager.spawn()
+
+// app.js
+const { Echidna } = require('discord-echidna')
+const echidna = new Echidna('Your Discord bot Token')
+
+echidna.on('ready', () => { console.log('Hello !') })
+```
