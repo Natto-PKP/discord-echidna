@@ -8,12 +8,14 @@ module.exports = {
 	ECHIDNA_CONTAIN_SPACE: (prop) => `${prop} string must not contain space`,
 	ECHIDNA_INVALID_PATH: (path) => `${path} path not exist`,
 	ECHIDNA_INVALID_EXPORT: (path) => `${path} not contain module.exports`,
+	ECHIDNA_DISCORD_PERMS: (target, perm) => `${target} has not ${perm} permission(s)`,
 
 	// Missing
 	ECHIDNA_TOKEN_MISSING: 'Request to use token, but token was unavailable to the client',
 	ECHIDNA_EVENT_MISSING: (str) => `"${str}" event is not supported`,
 	ECHIDNA_COLLECTION_MISSING: (str) => `${str} collection does not exist`,
 	ECHIDNA_ARRAY_MISSING: (str) => `${str} is not a array`,
+	ECHIDNA_CLIENT_MESSAGE_MISSING: 'this message is not a client user message',
 
 	// TAKEN
 	ECHIDNA_COLLECTION_TAKEN: (str) => `${str} collection name is already taken`,

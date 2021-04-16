@@ -112,10 +112,38 @@ Discord.GuildEmojiManager.prototype.select = function (search, { strict = false 
 	return strict ? this.cache.get(search.replace(/\D+/g, '')) : this.cache.find((emoji) => emoji.id == search.replace(/\D+/g, '') || emoji.name.toLowerCase().includes(search.toLowerCase()))
 }
 
-/*
+// NEW
+
 // Message
-Discord.Message.prototype.createPages = async function (content, { emojis = ['◀', '🔴', '▶'] } = {}) {
+/**
+ * @async
+ * @param {String} userID 
+ * @param {Array<String|Object>} pages 
+ * @param {Object} param2 
+ * @param {Array<String>} [param2.emojis]
+ * @param {Discord.ReactionCollectorOptions} [param2.collectorOptions]
+ * @returns {Discord.Message}
+ */
+Discord.Message.prototype.createPages = async function (userID, pages, { emojis = ['◀', '🔴', '▶'], collectorOptions = { idle: 30000 } } = {}) {
+	if (this.author.id != this.client.user.id) throw new Error('ECHIDNA_CLIENT_MESSAGE_MISSING')
+	if (this.guild && !this.guild.me.permissionsIn(this.channel).has('ADD_REACTIONS')) throw new Error('ECHIDNA_DISCORD_PERMS', 'client', 'ADD_REACTIONS')
+	if (!Array.isArray(pages)) throw new TypeError('ECHIDNA_INVALID_OPTION', 'pages', 'array')
 	if (!emojis || !Array.isArray(emojis)) throw new TypeError('ECHIDNA_INVALID_OPTION', 'emojis', 'array')
 	if (emojis.length < 3) throw new Error('ECHIDNA_INVALID_LENGTH', 'array', 'emojis', 3)
+
+	emojis = emojis.slice(0, 3)
+	for (const e of emojis) await this.react(e)
+	const col = this.createReactionCollector((reaction, user) => emojis.some((e) => [reaction.emoji.name, reaction.emoji.id].includes(e)) && user.id == userID, collectorOptions)
+
+	let i = 0
+	col
+		.on('collect', async (reaction, user) => {
+			reaction.users.remove(user).catch(() => null)
+			if ([reaction.emoji.name, reaction.emoji.id].includes(emojis[0])) pages[i - 1] && (await this.edit(pages[--i]).catch(() => col.stop('error')))
+			else if ([reaction.emoji.name, reaction.emoji.id].includes(emojis[1])) col.stop('stop')
+			else if ([reaction.emoji.name, reaction.emoji.id].includes(emojis[2])) pages[i + 1] && (await this.edit(pages[++i]).catch(() => col.stop('error')))
+		})
+		.on('end', () => null)
+
+	return this
 }
-*/
