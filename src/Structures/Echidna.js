@@ -20,8 +20,8 @@ module.exports = class Echidna {
 
 	/**
 	 * @param {String} event 
-	 * @param {Function} listener 
-	 * @param {*} EventOptions 
+	 * @param {Function} listener
+	 * @param {Object} EventOptions 
 	 * @returns 
 	 */
 	on (event, listener = () => null, EventOptions = {}) {

@@ -1,13 +1,12 @@
 declare module 'discord.js' {
 	import Discord from 'discord.js'
 
-	// New methods
 	interface ChannelManager {
-		select(search: String, options?: { strict: Boolean; type?: String | Boolean }): Discord.Channel
+		select(search: String, options?: { strict?: Boolean; type?: String | Boolean }): Discord.Channel
 	}
 
 	interface GuildChannelManager {
-		select(search: String, options?: { strict: Boolean; type?: String | Boolean }): Discord.Channel
+		select(search: String, options?: { strict?: Boolean; type?: String | Boolean }): Discord.GuildChannel
 	}
 
 	interface GuildEmojiManager {
