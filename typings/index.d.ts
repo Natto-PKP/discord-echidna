@@ -12,7 +12,7 @@ declare module 'discord-echidna' {
 		public array: Array<{ exec: Function; options: Object; help?: Object }>
 		public cooldowns: Object
 		public create (exec: (params: Listeners['message']) => void, options: CommandsOptions, help?: Object): void
-		public get (name: String): { exec: (params: Listeners['message']) => void; options: CommandsOptions; help?: Object }
+		public get (name: String, arg?: String): { exec: (params: Listeners['message']) => void; options: CommandsOptions; help?: Object }
 		public exist (...names: Array<String>): Boolean
 	}
 
@@ -25,6 +25,8 @@ declare module 'discord-echidna' {
 
 	export class Echidna {
 		constructor (token: String, EchidnaOptions?: EchidnaOptions)
+		public client: Discord.Client
+		public options: EchidnaOptions
 		public on<K extends keyof Events> (event: K, listener?: (params: Listeners[K]) => void): Events[K]
 		public on<K extends keyof EventsWithOptions> (event: K, listener?: (params: Listeners[K]) => void, EventOptions?: EventsOptions[K]): Events[K]
 	}
@@ -260,6 +262,7 @@ declare module 'discord-echidna' {
 		aliases?: Array<String> | RegExp
 		cooldown?: Number
 		permissions?: Permissions
+		modules?: String
 		allow?: AllowedOrDenyID
 		deny?: AllowedOrDenyID
 	}
@@ -341,7 +344,7 @@ declare module 'discord-echidna' {
 		channelDelete: { client?: Discord.Client; channel?: Discord.Channel; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
 		channelPinsUpdate: { client?: Discord.Client; channel?: Discord.Channel; date?: Date; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
 		channelUpdate: { client?: Discord.Client; oldChannel?: Discord.Channel; newChannel?: Discord.Channel; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		debug: { client?: Discord.Client }
+		debug: { client?: Discord.Client; info?: String }
 		emojiCreate: { client?: Discord.Client; emoji?: Discord.Emoji; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
 		emojiDelete: { client?: Discord.Client; emoji?: Discord.Emoji; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
 		emojiUpdate: { client?: Discord.Client; oldEmoji?: Discord.Emoji; newEmoji?: Discord.Emoji; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }

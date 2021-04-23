@@ -38,7 +38,7 @@ module.exports = {
 				listener(pack)
 
 				if (message.guild && !message.author.bot) {
-					const cmd = prefix && prefix.length > 0 && PREFIX && Commands.get(command)
+					const cmd = prefix && prefix.length > 0 && PREFIX && Commands.get(command, args[0])
 					if (!cmd) return
 
 					if (!owners.includes(message.author.id)) {
@@ -55,7 +55,7 @@ module.exports = {
 					}
 
 					// cooldowns
-					const key = `${message.author.id}${cmd.options.name}`
+					const key = `${message.author.id}${cmd.options.parent ? cmd.options.parent + cmd.options.name : cmd.options.name}`
 					if (Commands.cooldowns[key] && Commands.cooldowns[key] - Date.now() / 1000 > 0) return message.channel.send(`${message.member} **\` |\`** ⏳ You must wait another **${Math.ceil(Commands.cooldowns[key] - Date.now() / 1000)}** second(s).`)
 
 					// Commands flags

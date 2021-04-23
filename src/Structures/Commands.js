@@ -1,6 +1,7 @@
 const { TypeError, Error } = require('../Errors/EchidnaError')
-const Enregex = require('enregex')
+const { Enregex } = require('enregex')
 const _permissions = require('../permissions.json')
+const { existsSync, lstatSync, readdirSync } = require('fs')
 
 module.exports = new class Commands {
 	constructor () {
@@ -14,6 +15,7 @@ module.exports = new class Commands {
      * @param {String} [options.name] 
      * @param {Object[]|RegExp} [options.aliases] 
      * @param {Number} [options.cooldown] 
+     * @param {String} [options.modules] 
      * @param {any} [options.permissions]
      * @param {Object[]} [options.permissions.users] Table of users permissions required
      * @param {Object[]} [options.permissions.client] Table of client permissions required
@@ -31,52 +33,72 @@ module.exports = new class Commands {
      * @param {any} help  Object custom for help command
      */
 	create (exec, options, help = {}) {
-		if (!exec || typeof exec != 'function') throw new TypeError('ECHIDNA_INVALID_OPTION', 'exec', 'function')
-		if (!options || Array.isArray(options) || typeof options != 'object') options = {}
+		const verif = (execution, opts) => {
+			if (!execution || typeof execution != 'function') throw new TypeError('ECHIDNA_INVALID_OPTION', 'exec', 'function')
+			if (!opts || Array.isArray(opts) || typeof opts != 'object') opts = {}
 
-		if (!options.name || typeof options.name != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'options.name', 'string')
-		if (options.name.length < 2) throw new Error('ECHIDNA_INVALID_LENGTH', 'string', 'options.name', '1')
-		if (/\s/.test(options.name)) throw new Error('ECHIDNA_CONTAIN_SPACE', 'options.name')
-		if (!options.aliases || !(Array.isArray(options.aliases) || options.aliases instanceof RegExp)) options.aliases = []
-		if (options.aliases instanceof RegExp) options.aliases = Enregex(options.aliases).array()
-		options.aliases.some((str) => {
-			if (typeof str != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', `options.aliases[${str}]`, 'string')
-			if (str.length < 2) throw new Error('ECHIDNA_INVALID_LENGTH', 'string', `options.aliases[${str}]`, '1')
-			if (/\s/.test(str)) throw new Error('ECHIDNA_CONTAIN_SPACE', 'options.aliases[*]')
-		})
+			if (!opts.name || typeof opts.name != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'options.name', 'string')
+			if (opts.name.length < 2) throw new Error('ECHIDNA_INVALID_LENGTH', 'string', 'options.name', '1')
+			if (/\s/.test(opts.name)) throw new Error('ECHIDNA_CONTAIN_SPACE', 'options.name')
+			if (!opts.aliases || !(Array.isArray(opts.aliases) || opts.aliases instanceof RegExp)) opts.aliases = []
+			if (opts.aliases instanceof RegExp) opts.aliases = Enregex(opts.aliases).array
+			opts.aliases.some((str) => {
+				if (typeof str != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', `options.aliases[${str}]`, 'string')
+				if (str.length < 2) throw new Error('ECHIDNA_INVALID_LENGTH', 'string', `options.aliases[${str}]`, '1')
+				if (/\s/.test(str)) throw new Error('ECHIDNA_CONTAIN_SPACE', 'options.aliases[*]')
+			})
 
-		if (this.exist(options.name, ...options.aliases)) throw new Error('ECHIDNA_NAME_TAKEN', 'Command')
+			if (this.exist(opts.name, ...opts.aliases)) throw new Error('ECHIDNA_NAME_TAKEN', 'Command')
 
-		if (!options.cooldown) options.cooldown = 1
-		if (typeof options.cooldown != 'number') throw new TypeError('ECHIDNA_INVALID_OPTION', 'options.cooldown', 'number')
+			if (!opts.cooldown) opts.cooldown = 1
+			if (typeof opts.cooldown != 'number') throw new TypeError('ECHIDNA_INVALID_OPTION', 'options.cooldown', 'number')
 
-		if (!options.permissions || Array.isArray(options.permissions) || typeof options.permissions != 'object') options.permissions = {}
-		if (!options.permissions.users || !Array.isArray(options.permissions.users)) options.permissions.users = []
-		if (!options.permissions.client || !Array.isArray(options.permissions.client)) options.permissions.client = []
-		if ([...options.permissions.client, ...options.permissions.users].some((e) => !_permissions.includes(e))) throw new Error('ECHIDNA_INVALID_PERM')
-		if (!options.permissions.flags || !Array.isArray(options.permissions.flags)) options.permissions.flags = []
+			if (!opts.permissions || Array.isArray(opts.permissions) || typeof opts.permissions != 'object') opts.permissions = {}
+			if (!opts.permissions.users || !Array.isArray(opts.permissions.users)) opts.permissions.users = []
+			if (!opts.permissions.client || !Array.isArray(opts.permissions.client)) opts.permissions.client = []
+			if ([...opts.permissions.client, ...opts.permissions.users].some((e) => !_permissions.includes(e))) throw new Error('ECHIDNA_INVALID_PERM')
+			if (!opts.permissions.flags || !Array.isArray(opts.permissions.flags)) opts.permissions.flags = []
 
-		if (!options.allow || Array.isArray(options.allow) || typeof options.allow != 'object') options.allow = {}
-		if (!options.allow.users || !Array.isArray(options.allow.users)) options.allow.users = []
-		if (!options.allow.channels || !Array.isArray(options.allow.channels)) options.allow.channels = []
-		if (!options.allow.guilds || !Array.isArray(options.allow.guilds)) options.allow.guilds = []
-		if (!options.allow.roles || !Array.isArray(options.allow.roles)) options.allow.roles = []
+			if (!opts.allow || Array.isArray(opts.allow) || typeof opts.allow != 'object') opts.allow = {}
+			if (!opts.allow.users || !Array.isArray(opts.allow.users)) opts.allow.users = []
+			if (!opts.allow.channels || !Array.isArray(opts.allow.channels)) opts.allow.channels = []
+			if (!opts.allow.guilds || !Array.isArray(opts.allow.guilds)) opts.allow.guilds = []
+			if (!opts.allow.roles || !Array.isArray(opts.allow.roles)) opts.allow.roles = []
 
-		if (!options.deny || Array.isArray(options.deny) || typeof options.deny != 'object') options.deny = {}
-		if (!options.deny.users || !Array.isArray(options.deny.users)) options.deny.users = []
-		if (!options.deny.channels || !Array.isArray(options.deny.channels)) options.deny.channels = []
-		if (!options.deny.guilds || !Array.isArray(options.deny.guilds)) options.deny.guilds = []
-		if (!options.deny.roles || !Array.isArray(options.deny.roles)) options.deny.roles = []
+			if (!opts.deny || Array.isArray(opts.deny) || typeof opts.deny != 'object') opts.deny = {}
+			if (!opts.deny.users || !Array.isArray(opts.deny.users)) opts.deny.users = []
+			if (!opts.deny.channels || !Array.isArray(opts.deny.channels)) opts.deny.channels = []
+			if (!opts.deny.guilds || !Array.isArray(opts.deny.guilds)) opts.deny.guilds = []
+			if (!opts.deny.roles || !Array.isArray(opts.deny.roles)) opts.deny.roles = []
 
-		this.array.push({ exec, options, help })
+			return opts
+		}
+
+		const parent = options.name
+		if (!options.modules || typeof options.modules != 'string') options.modules = []
+		else {
+			const dir = options.modules.endsWith('/') ? options.modules : options.modules + '/'
+			if (!existsSync(dir)) throw new Error('ECHIDNA_INVALID_PATH', options.modules)
+			if (!lstatSync(dir).isDirectory()) throw new TypeError('ECHIDNA_INVALID_OPTION', 'options.modules', 'directory')
+			options.modules = []
+			readdirSync(dir).forEach((file) => {
+				const mdl = require('../../../.' + dir + file)
+				const obj = Array.isArray(mdl) ? { exec: mdl[0], options: mdl[1], help: mdl[2] } : mdl
+				options.modules.push({ exec: obj.exec, options: Object.assign(verif(...Object.values(obj)), { parent }), help: obj.help })
+			})
+		}
+
+		this.array.push({ exec, options: verif(exec, options), help })
 	}
 
 	/**
      * @param {String} name 
+     * @param {String} arg 
      * @returns
      */
-	get (name) {
-		return this.array.find(({ options }) => [options.name, ...options.aliases].includes(name))
+	get (name, arg) {
+		const command = this.array.find(({ options }) => [options.name, ...options.aliases].includes(name))
+		return (arg && command.options.modules.find(({ options }) => [options.name, ...options.aliases].includes(arg))) || command
 	}
 
 	/**
