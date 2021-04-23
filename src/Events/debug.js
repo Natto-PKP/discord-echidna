@@ -5,7 +5,7 @@ module.exports = {
          * @param {Object} param1 
          */
 		constructor (listener, { client }) {
-			client.on('debug', () => listener({ client }))
+			client.on('debug', (info) => listener({ client, info }))
 		}
 	},
 	defaultOptions: {}
