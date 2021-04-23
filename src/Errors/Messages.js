@@ -10,12 +10,15 @@ module.exports = {
 	ECHIDNA_INVALID_EXPORT: (path) => `${path} not contain module.exports`,
 	ECHIDNA_DISCORD_PERMS: (target, perm) => `${target} has not ${perm} permission(s)`,
 
+	ECHIDNA_SCMD_ERROR: (message) => message,
+
 	// Missing
 	ECHIDNA_TOKEN_MISSING: 'Request to use token, but token was unavailable to the client',
 	ECHIDNA_EVENT_MISSING: (str) => `"${str}" event is not supported`,
 	ECHIDNA_COLLECTION_MISSING: (str) => `${str} collection does not exist`,
 	ECHIDNA_ARRAY_MISSING: (str) => `${str} is not a array`,
-	ECHIDNA_CLIENT_MESSAGE_MISSING: 'this message is not a client user message',
+	ECHIDNA_CLIENT_MESSAGE_MISSING: 'This message is not a client user message',
+	ECHIDNA_GUILD_MISSING: 'This guild id is not available from your client',
 
 	// TAKEN
 	ECHIDNA_COLLECTION_TAKEN: (str) => `${str} collection name is already taken`,
