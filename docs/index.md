@@ -18,7 +18,7 @@ const { Echidna } = require('discord-echidna')
 const echidna = new Echidna('Your bot Token')
 
 // Classic ready event
-echidna.on('ready', ({ client }) => console.log(client.user.tag + ' is ready !'))
+echidna.on('ready', ({ client }) => console.log(client.user.tag + ' is ready.'))
 
 // Message event
 echidna.on('message', ({ client, message, command, args }) => {
@@ -41,10 +41,12 @@ const doc = Database.open('Léon', 'students')
 
 // Update document content
 doc.update({ notes: { geo: 14, arts: { music: 1 } } })
-doc.content // { ID: 'Léon', notes: { geo: 14, arts: { music: 1 } }, year: 2021 }
+doc.content
+// { ID: 'Léon', notes: { geo: 14, arts: { music: 1 } }, year: 2021 }
 
 doc.update({ music: 12 }, { path: 'notes.arts' })
-doc.content // { ID: 'Léon', notes: { geo: 14, arts: { music: 12 } }, year: 2021 }
+doc.content
+// { ID: 'Léon', notes: { geo: 14, arts: { music: 12 } }, year: 2021 }
 
 // Save changement
 doc.save()
@@ -54,7 +56,8 @@ doc.save()
 
 ```js
 /**
-  * If the event message (discord-echidna) is not issued, commands will not be executed.
+  * If the event message (discord-echidna) is not issued, commands 
+  * will not be executed.
   * Command will be automatically executed during a message.
   */
 const { Commands } = require('discord-echidna')
@@ -71,7 +74,7 @@ Commands.create(
 
 ```js
 // commandsDir fetch automaticaly your commands
-echidna.on('message', () => null, { commandsDir: './commands' /* Commands directory */ })
+echidna.on('message', () => null, { commandsDir: './commands' })
 ```
 
 ### Others
