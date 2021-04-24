@@ -1,8 +1,7 @@
-- [#Examples](#examples)
-  - [Echidna Client](#echidna-client)
-  - [Database](#database)
-  - [Commands](#commands)
-  - [Others](#others)
+- [Echidna Client](#echidna-client)
+- [Database](#database)
+- [Commands](#commands)
+- [Others](#others)
 
 # #Examples
 ***
