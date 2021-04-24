@@ -26,7 +26,7 @@ declare module 'discord.js' {
 	}
 
 	interface Message {
-		createPage(userID: String, pages: Array<String | Object>, options?: { emojis?: Array<String>; collectorOptions?: Discord.ReactionCollectorOptions }): Discord.Message
+		createPage(array: Discord.Collection | Array<any>, format: (array: Array<any>, pages: { number: Number; total: Number }) => void, options: { limit: Number; emojis?: Array<String> }, collectorOptions?: Discord.ReactionCollectorOptions): Discord.Message
 	}
 
 	interface RoleManager {

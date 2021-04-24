@@ -116,34 +116,49 @@ Discord.GuildEmojiManager.prototype.select = function (search, { strict = false 
 
 // Message
 /**
+ * @example
+ * const format = (array, pages) => array.map(role => role.name).join(', ')
+ * message.createPages(message.guild.roles.cache, format, { limit: 30 })
  * @async
- * @param {String} userID 
- * @param {Array<String|Object>} pages 
+ * @param {Array} array 
+ * @param {Function} format 
  * @param {Object} param2 
- * @param {Array<String>} [param2.emojis]
- * @param {Discord.ReactionCollectorOptions} [param2.collectorOptions]
+ * @param {Number} [param2.limit] 
+ * @param {Array<String>} [param2.emojis] 
+ * @param {Discord.ReactionCollectorOptions} collectorOptions 
  * @returns {Discord.Message}
  */
-Discord.Message.prototype.createPages = async function (userID, pages, { emojis = ['◀', '🔴', '▶'], collectorOptions = { idle: 30000 } } = {}) {
-	if (this.author.id != this.client.user.id) throw new Error('ECHIDNA_CLIENT_MESSAGE_MISSING')
-	if (this.guild && !this.guild.me.permissionsIn(this.channel).has('ADD_REACTIONS')) throw new Error('ECHIDNA_DISCORD_PERMS', 'client', 'ADD_REACTIONS')
-	if (!Array.isArray(pages)) throw new TypeError('ECHIDNA_INVALID_OPTION', 'pages', 'array')
+Discord.Message.prototype.createPages = async function (array, format, { limit, emojis = ['◀', '🔴', '▶'] } = {}, collectorOptions = { idle: 30000 }) {
+	if (!array || (!Array.isArray(array) && !(array instanceof Discord.Collection))) throw new TypeError('ECHIDNA_INVALID_OPTION', 'array', 'array|Discord.Collection')
+	if (!format || typeof format != 'function') throw new TypeError('ECHIDNA_INVALID_OPTION', 'format', 'function')
+	if (!limit || typeof limit != 'number' || limit <= 0) throw new TypeError('ECHIDNA_INVALID_OPTION', 'limit', 'number > 0')
+	if (this.guild && !this.guild.me.permissionsIn(this.channel).has(3072)) throw new Error('ECHIDNA_DISCORD_PERMS', 'client', '[ADD_REACTIONS, SEND_MESSAGES]')
 	if (!emojis || !Array.isArray(emojis)) throw new TypeError('ECHIDNA_INVALID_OPTION', 'emojis', 'array')
 	if (emojis.length < 3) throw new Error('ECHIDNA_INVALID_LENGTH', 'array', 'emojis', 3)
 
-	emojis = emojis.slice(0, 3)
-	for (const e of emojis) await this.react(e)
-	const col = this.createReactionCollector((reaction, user) => emojis.some((e) => [reaction.emoji.name, reaction.emoji.id].includes(e)) && user.id == userID, collectorOptions)
+	array = array instanceof Discord.Collection ? array.array() : array
+	const pages = Array.from({ length: Math.ceil(array.length / limit) }, (v, i) => format(array.slice(i * limit, i * limit + limit), { number: i + 1, total: Math.ceil(array.length / limit) }))
+
+	const message = await this.channel.send(pages[0])
+	if (!pages[1]) return message
+
+	for (const e of emojis.slice(0, 3)) await message.react(e)
+	const col = message.createReactionCollector((reaction, user) => emojis.some((e) => [reaction.emoji.name, reaction.emoji.id].includes(e)) && user.id == this.author.id, collectorOptions)
 
 	let i = 0
 	col
 		.on('collect', async (reaction, user) => {
 			reaction.users.remove(user).catch(() => null)
-			if ([reaction.emoji.name, reaction.emoji.id].includes(emojis[0])) pages[i - 1] && (await this.edit(pages[--i]).catch(() => col.stop('error')))
-			else if ([reaction.emoji.name, reaction.emoji.id].includes(emojis[1])) col.stop('stop')
-			else if ([reaction.emoji.name, reaction.emoji.id].includes(emojis[2])) pages[i + 1] && (await this.edit(pages[++i]).catch(() => col.stop('error')))
+			if ([reaction.emoji.name, reaction.emoji.id].includes(emojis[0])) {
+				pages[i - 1] ? --i : (i = pages.length - 1)
+				await message.edit(pages[i]).catch(() => col.stop('error'))
+			} else if ([reaction.emoji.name, reaction.emoji.id].includes(emojis[1])) col.stop('stop')
+			else if ([reaction.emoji.name, reaction.emoji.id].includes(emojis[2])) {
+				pages[i + 1] ? ++i : (i = 0)
+				await message.edit(pages[i]).catch(() => col.stop('error'))
+			}
 		})
 		.on('end', () => null)
 
-	return this
+	return message
 }
