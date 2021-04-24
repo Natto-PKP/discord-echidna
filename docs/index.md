@@ -9,7 +9,7 @@
 # #Examples
 ***
 
-## Echidna Client
+### Echidna Client
 
 ```js
 const { Echidna } = require('discord-echidna')
@@ -28,7 +28,7 @@ echidna.on('message', ({ client, message, command, args }) => {
 })
 ```
 
-## Database
+### Database
 
 ```js
 const { Collections, Database } = require('discord-echidna')
@@ -50,7 +50,7 @@ doc.content // { ID: 'Léon', notes: { geo: 14, arts: { music: 12 } }, year: 202
 doc.save()
 ```
 
-## Commands
+### Commands
 
 ```js
 /**
@@ -74,9 +74,9 @@ Commands.create(
 echidna.on('message', () => null, { commandsDir: './commands' /* Commands directory */ })
 ```
 
-## Others
+### Others
 
-### Discord.js sharding
+#### Discord.js sharding
 
 # Classes
 
