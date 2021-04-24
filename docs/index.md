@@ -1,8 +1,4 @@
-# Documentation
-
-## Table of contents
-
-- [Examples](#examples)
+- [Examples](##examples)
   - [Echidna Client](#echidna-client)
   - [Database](#database)
   - [Commands](#commands)
@@ -10,7 +6,8 @@
 - [Classes](#classes)
 - [Discord.js _proto](#discord.js-_proto)
 
-# Examples
+# #Examples
+***
 
 ## Echidna Client
 
