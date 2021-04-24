@@ -83,12 +83,12 @@ echidna.on('message', () => null, { commandsDir: './commands' })
 const { ShardingManager } = require('discord.js')
 const manager = new ShardingManager('./app.js', { token: 'TOKEN' })
 
-manager.on('shardCreate', shard => console.log(`Launched shard ${shard.id}`))
+manager.on('shardCreate', shard => console.log('Launched shard ' + shard.id))
 manager.spawn()
 
 // app.js
 const { Echidna } = require('discord-echidna')
-const echidna = new Echidna('Your Discord bot Token')
+const echidna = new Echidna('TOKEN')
 
 echidna.on('ready', () => { console.log('Hello !') })
 ```
