@@ -1,6 +1,4 @@
-# Test
-
-# TEST
+# Documentation
 
 ## Welcome to GitHub Pages
 
