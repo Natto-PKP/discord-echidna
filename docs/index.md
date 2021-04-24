@@ -1,10 +1,8 @@
-- [Examples](#examples)
+- [#Examples](#examples)
   - [Echidna Client](#echidna-client)
   - [Database](#database)
   - [Commands](#commands)
   - [Others](#others)
-- [Classes](#classes)
-- [Discord.js _proto](#discord.js-_proto)
 
 # #Examples
 ***
@@ -15,7 +13,7 @@
 const { Echidna } = require('discord-echidna')
 
 // Create discord-echidna instance
-const echidna = new Echidna('Your bot Token')
+const echidna = new Echidna('TOKEN')
 
 // Classic ready event
 echidna.on('ready', ({ client }) => console.log(client.user.tag + ' is ready.'))
@@ -81,6 +79,32 @@ echidna.on('message', () => null, { commandsDir: './commands' })
 
 #### Discord.js sharding
 
-# Classes
+```js
+// index.js
+const { ShardingManager } = require('discord.js')
+const manager = new ShardingManager('./app.js', { token: 'TOKEN' })
 
-# Discord.js _proto
+manager.on('shardCreate', shard => console.log(`Launched shard ${shard.id}`))
+manager.spawn()
+
+// app.js
+const { Echidna } = require('discord-echidna')
+const echidna = new Echidna('Your Discord bot Token')
+
+echidna.on('ready', () => { console.log('Hello !') })
+```
+
+#### Message.createPages()
+
+```js
+const format = (array, { number, total }) => ({
+  embed: {
+    author: { name: 'Guild roles' },
+    color: 'green',
+    description: array.map((role) => role.toString()).join(' '),
+    footer: { text: 'pages: ' + number + '/' + total }
+  }
+})
+
+message.createPages(message.guild.roles.cache, format, { limit: 10 })
+```
