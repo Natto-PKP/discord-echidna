@@ -120,7 +120,7 @@ Discord.GuildEmojiManager.prototype.select = function (search, { strict = false 
  * const format = (array, pages) => array.map(role => role.name).join(', ')
  * message.createPages(message.guild.roles.cache, format, { limit: 30 })
  * @async
- * @param {Array} array 
+ * @param {Discord.Collection|Array<any>} array 
  * @param {Function} format 
  * @param {Object} param2 
  * @param {Number} [param2.limit] 

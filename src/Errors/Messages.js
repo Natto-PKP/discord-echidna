@@ -8,7 +8,7 @@ module.exports = {
 	ECHIDNA_CONTAIN_SPACE: (prop) => `${prop} string must not contain space`,
 	ECHIDNA_INVALID_PATH: (path) => `${path} path not exist`,
 	ECHIDNA_INVALID_EXPORT: (path) => `${path} not contain module.exports`,
-	ECHIDNA_DISCORD_PERMS: (target, perm) => `${target} has not ${perm} permission(s)`,
+	ECHIDNA_DISCORD_PERMS: (target) => `${target} has not a permission(s)`,
 
 	ECHIDNA_SCMD_ERROR: (message) => message,
 

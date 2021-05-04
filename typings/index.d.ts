@@ -8,11 +8,12 @@ declare module 'discord-echidna' {
 		public add (collectionName: String, model: Object | Array<any>): void
 	}
 
-	class CommandsInterface {
-		public array: Array<{ exec: Function; options: Object; help?: Object }>
+	export class Commands {
+		constructor (echidna: Echidna, options: CommandsOptions)
+		public array: Array<{ exec: (params: Command['exec']) => void; options: Command['options']; help?: any }>
 		public cooldowns: Object
-		public create (exec: (params: Listeners['message']) => void, options: CommandsOptions, help?: Object): void
-		public get (name: String, arg?: String): { exec: (params: Listeners['message']) => void; options: CommandsOptions; help?: Object }
+		public create (exec: (params: Command['exec']) => void, options: Command['options'], help?: any): void
+		public get (name: String, arg?: String): { exec: (params: Command['exec']) => void; options: Command['options']; help?: any }
 		public exist (...names: Array<String>): Boolean
 	}
 
@@ -29,15 +30,16 @@ declare module 'discord-echidna' {
 		public options: EchidnaOptions
 		public on<K extends keyof Events> (event: K, listener?: (params: Listeners[K]) => void): Events[K]
 		public on<K extends keyof EventsWithOptions> (event: K, listener?: (params: Listeners[K]) => void, EventOptions?: EventsOptions[K]): Events[K]
+		public commands (options: CommandsOptions): Commands
+	}
+
+	class Util {
+		checkTypings (target: Object, source: Object): Object
+		parseToRegexp (value: String): String
 	}
 
 	export const Collections: CollectionsInterface
-	export const Commands: CommandsInterface
 	export const Database: DatabaseInterface
-
-	class Util {
-		verifyDefault (target: Object, source: Object): Object
-	}
 
 	// Managers
 
@@ -257,14 +259,33 @@ declare module 'discord-echidna' {
 		roles?: Array<String>
 	}
 
+	interface Command {
+		exec: {
+			client?: Discord.Client
+			message?: Discord.Message
+			prefix?: String
+			command?: String
+			args?: Array<String>
+			Database?: DatabaseInterface
+			Collections?: CollectionsInterface
+			Util?: Util
+			Commands?: Commands
+			options?: { ignore?: Ignore; owners?: Array<String>; lang?: String }
+		}
+		options: {
+			name: String
+			aliases?: Array<String> | RegExp
+			cooldown?: Number
+			permissions?: Permissions
+			modules?: String
+			allow?: AllowedOrDenyID
+			deny?: AllowedOrDenyID
+		}
+	}
+
 	interface CommandsOptions {
-		name: String
-		aliases?: Array<String> | RegExp
-		cooldown?: Number
-		permissions?: Permissions
-		modules?: String
-		allow?: AllowedOrDenyID
-		deny?: AllowedOrDenyID
+		prefixes: String | Array<String> | { collection: String; properties: String }
+		directory: String | { path: String; categories: Boolean }
 	}
 
 	type EchidnaFlags = 'owner'
@@ -275,9 +296,7 @@ declare module 'discord-echidna' {
 		owners?: Array<String>
 	}
 
-	interface EventsWithOptions {
-		message: MessageEvent
-	}
+	interface EventsWithOptions {}
 
 	interface Events extends EventsWithOptions {
 		channelCreate: ChannelCreateEvent
@@ -330,9 +349,7 @@ declare module 'discord-echidna' {
 		webhookUpdate: WebhookUpdateEvent
 	}
 
-	interface EventsOptions {
-		message: { commandsDir?: String; prefix?: String }
-	}
+	interface EventsOptions {}
 
 	interface Ignore {
 		users?: Array<String>
@@ -365,7 +382,7 @@ declare module 'discord-echidna' {
 		invalidated: { client?: Discord.Client }
 		inviteCreate: { client?: Discord.Client; invite?: Discord.Invite; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
 		inviteDelete: { client?: Discord.Client; invite?: Discord.Invite; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		message: { client?: Discord.Client; message?: Discord.Message; prefix?: String; command?: String; args?: Array<String>; options?: { ignore?: Ignore; owners?: Array<String>; commandsDir?: String; prefix?: String }; Database?: DatabaseInterface; Collections?: CollectionsInterface; Commands?: CommandsInterface }
+		message: { client?: Discord.Client; message?: Discord.Message; options?: { ignore?: Ignore; owners?: Array<String> } }
 		messageDelete: { client?: Discord.Client; message?: Discord.Message; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
 		messageDeleteBulk: { client?: Discord.Client; messages?: Discord.Collection<Discord.Snowflake, Discord.Message>; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
 		messageReactionAdd: { client?: Discord.Client; reaction?: Discord.MessageReaction; user?: Discord.User; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
@@ -375,7 +392,7 @@ declare module 'discord-echidna' {
 		messageUpdate: { client?: Discord.Client; oldMessage?: Discord.Message; newMessage?: Discord.Message; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
 		presenceUpdate: { client?: Discord.Client; oldPresence?: Discord.Presence; newPresence?: Discord.Presence; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
 		rateLimit: { client?: Discord.Client; info?: { timeout?: Number; limit?: Number; method?: String; path?: String; route?: String } }
-		ready: { client?: Discord.Client; Database?: DatabaseInterface; Collections?: CollectionsInterface; Commands?: CommandsInterface }
+		ready: { client?: Discord.Client; Database?: DatabaseInterface; Collections?: CollectionsInterface }
 		roleCreate: { client?: Discord.Client; role?: Discord.Role; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
 		roleDelete: { client?: Discord.Client; role?: Discord.Role; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
 		roleUpdate: { client?: Discord.Client; oldRole?: Discord.Role; newRole?: Discord.Role; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
