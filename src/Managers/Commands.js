@@ -27,7 +27,7 @@ const commandCheck = (exec, options) => {
 	if (/\s/.test(options.name)) throw new Error('ECHIDNA_CONTAIN_SPACE', 'options.name')
 
 	// Aliases
-	options.aliases = options.aliases instanceof RegExp ? Enregex(options.aliases).array : []
+	options.aliases = options.aliases instanceof RegExp ? Enregex(options.aliases).array : Array.isArray(options.aliases) ? options.aliases : []
 	options.aliases.some((alias) => {
 		if (typeof alias != 'string' || !alias.length) throw new TypeError('ECHIDNA_INVALID_OPTION', `options.aliases[${alias}]`, 'string')
 		if (/\s/.test(alias)) throw new Error('ECHIDNA_CONTAIN_SPACE', `options.aliases[${alias}]`)
@@ -84,7 +84,7 @@ module.exports = class Commands {
 
 			if (directory.categories) {
 				readdirSync(path).filter((dir) => lstatSync(join(path, dir)).isDirectory()).forEach((dir) =>
-					readdirSync(join(path, dir)).filter((file) => {
+					readdirSync(join(path, dir)).filter((file) => lstatSync(join(path, dir, file)).isFile() && file.endsWith('.js')).forEach((file) => {
 						const obj = require(join('../../../../', path, dir, file))
 						if (typeof obj != 'object') throw new TypeError('ECHIDNA_INVALID_OPTION', `module.exports of ${join(path, dir, file)}`, 'object')
 						const [exec, options, help] = Array.isArray(obj) ? obj : [obj.exec, obj.options, obj.help]
@@ -197,7 +197,7 @@ module.exports = class Commands {
 			options.modules = readdirSync(options.modules).filter((file) => lstatSync(join(options.modules, file)).isFile() && file.endsWith('.js')).map((file) => {
 				const content = require(join('../../../../', options.modules, file))
 				const arr = Array.isArray(content) ? content : Object.values(content)
-				options.modules.push({ exec: arr[0], options: Object.assign(commandCheck(...arr), { parent: options.name }), help: arr[2] })
+				return { exec: arr[0], options: Object.assign(commandCheck(...arr), { parent: options.name }), help: arr[2] }
 			})
 		} else options.modules = []
 
