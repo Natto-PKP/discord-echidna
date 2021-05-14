@@ -109,9 +109,9 @@ module.exports = class Document {
 	/**
 	 * Remove values
 	 * @param { object } param0 
-	 * @param { string } [param1.path]
-	 * @param { number } [param1.index]
-	 * @param { number } [param1.size]
+	 * @param { string } [param0.path]
+	 * @param { number } [param0.index]
+	 * @param { number } [param0.size]
 	 * @return { Document }
 	 */
 	remove ({ path, index, size = 1 } = {}) {

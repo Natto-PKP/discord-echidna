@@ -34,7 +34,7 @@ declare module 'discord-echidna' {
 	}
 
 	class UtilInterface {
-		public assembly (target: string, source: any): object
+		public assembly (target: object, source: object): object
 		public checkTypings (target: object, source: object): object
 		public parseToRegexp (value: string): string
 	}

@@ -27,14 +27,16 @@ module.exports = class Util {
 
 	/**
 	 * @param { object } target 
-	 * @param { any } source 
+	 * @param { object } source 
 	 * @returns { object }
 	 */
 	static assembly (target, source) {
-		if (typeof target != 'object' && Array.isArray(target)) throw new TypeError('ECHIDNA_INVALID_OPTION', 'target', 'object')
+		if (typeof target != 'object' || Array.isArray(target)) throw new TypeError('ECHIDNA_INVALID_OPTION', 'target', 'object')
+		if (typeof source != 'object' || Array.isArray(source)) throw new TypeError('ECHIDNA_INVALID_OPTION', 'source', 'object')
+
 		for (const [key, value] of Object.entries(source)) {
 			if (Array.isArray(target[key])) target[key] = Array.isArray(value) ? [...target[key], ...value] : [...target[key], value]
-			else if (typeof target == 'object' && Object.hasOwnProperty.call(target, key)) target[key] = Util.assembly(target[key] || {}, value)
+			else if (typeof target[key] == 'object' && Object.hasOwnProperty.call(target, key)) target[key] = Util.assembly(target[key] || {}, value)
 			else target[key] = value
 		}
 		return target
