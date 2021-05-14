@@ -3,11 +3,6 @@ declare module 'discord-echidna' {
 
 	// Structures
 
-	class CollectionsInterface {
-		public array: Array<{ name: String; model: Function }>
-		public add (collectionName: String, model: Object | Array<any>): void
-	}
-
 	export class Commands {
 		constructor (echidna: Echidna, options: CommandsOptions)
 		public array: Array<{ exec: (params: Command['exec']) => void; options: Command['options']; help?: any }>
@@ -15,13 +10,6 @@ declare module 'discord-echidna' {
 		public create (exec: (params: Command['exec']) => void, options: Command['options'], help?: any): void
 		public get (name: String, arg?: String): { exec: (params: Command['exec']) => void; options: Command['options']; help?: any }
 		public exist (...names: Array<String>): Boolean
-	}
-
-	class DatabaseInterface {
-		public Collections: CollectionsInterface
-		public delete (DocumentID: String, collectionName: String): void
-		public exist (DocumentID: String, collectionName: String): Boolean
-		public open (DocumentID: String, collectionName: String): Document
 	}
 
 	export class Echidna {
@@ -33,26 +21,40 @@ declare module 'discord-echidna' {
 		public commands (options: CommandsOptions): Commands
 	}
 
-	class Util {
-		checkTypings (target: Object, source: Object): Object
-		parseToRegexp (value: String): String
+	class CollectionsInterface {
+		public array: Array<{ name: String; model: Function }>
+		public add (collectionName: String, model: Object | Array<any>): void
+	}
+
+	class DatabaseInterface {
+		public Collections: CollectionsInterface
+		public delete (DocumentID: String, collectionName: String): void
+		public exist (DocumentID: String, collectionName: String): Boolean
+		public open (DocumentID: String, collectionName: String): Document
+	}
+
+	class UtilInterface {
+		public assembly (target: string, source: any): object
+		public checkTypings (target: object, source: object): object
+		public parseToRegexp (value: string): string
 	}
 
 	export const Collections: CollectionsInterface
 	export const Database: DatabaseInterface
+	export const Util: UtilInterface
 
 	// Managers
 
 	class Document {
-		constructor (params: { ID: String; path: String; collection: { name: String; model: Function } })
-		public collection: { name: String; model: Function }
-		public content: Object | Array<any>
-		private options: { ID: String; path: String }
+		constructor (params: { ID: string; path: string; collection: { name: string; model: (ID: string) => void } })
+		public collection: { name: string; model: (ID: string) => void }
+		public content: object
+		private options: { ID: string; path: string }
 		public delete (): void
-		public update (source: Object, options?: { index?: Number; path?: String }): this
-		private static update (target: Object, source: Object, options?: { index?: Number; path?: String }): Object | Array<any>
+		public update (source: any, options?: { index?: Number; path?: string }): this
 		public save (): void
-		public remove (options?: { index?: Number; path?: String; size?: 1 }): this
+		public set (source: any, options?: { index?: Number; path?: string }): this
+		public remove (options?: { index?: Number; path?: string; size?: 1 }): this
 		public reset (): this
 	}
 
@@ -268,7 +270,7 @@ declare module 'discord-echidna' {
 			args?: Array<String>
 			Database?: DatabaseInterface
 			Collections?: CollectionsInterface
-			Util?: Util
+			Util?: UtilInterface
 			Commands?: Commands
 			options?: { ignore?: Ignore; owners?: Array<String>; lang?: String }
 		}
