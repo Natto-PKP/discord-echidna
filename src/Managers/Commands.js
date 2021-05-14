@@ -142,16 +142,16 @@ module.exports = class Commands {
 
 			// cooldowns
 			const key = `${message.author.id}${expt.options.parent ? expt.options.parent + expt.options.name : expt.options.name}`
-			if (this.cooldowns[key] && this.cooldowns[key] - Date.now() / 1000 > 0) return message.channel.send(contents.cooldown(message.member, Math.ceil(this.cooldowns[key] - Date.now() / 1000)))
+			if (this.cooldowns[key] && this.cooldowns[key] - Date.now() / 1000 > 0) return message.channel.send(contents.cooldown(message.member.toString(), Math.ceil(this.cooldowns[key] - Date.now() / 1000)))
 
 			// Commands flags
-			if (expt.options.permissions.flags.includes('owner') && !owners.includes(message.author.id)) return message.channel.send(contents['no-owner'](message.author))
+			if (expt.options.permissions.flags.includes('owner') && !owners.includes(message.author.id)) return message.channel.send(contents['no-owner'](message.author.toString()))
 
 			// Permissions
-			if (expt.options.permissions.users.length > 0 && !owners.includes(message.author.id) && message.member.permissions.missing(expt.options.permissions.users).length > 0) return message.channel.send(contents['no-member-perms'](message.member, message.member.permissions.missing(expt.options.permissions.users).join('` `')))
+			if (expt.options.permissions.users.length > 0 && !owners.includes(message.author.id) && message.member.permissions.missing(expt.options.permissions.users).length > 0) return message.channel.send(contents['no-member-perms'](message.member.toString(), message.member.permissions.missing(expt.options.permissions.users).join('` `')))
 			if (expt.options.permissions.client.length > 0) {
-				if (message.guild.me.permissions.missing(expt.options.permissions.client).length > 0) return message.channel.send(contents['no-client-perms'](message.member, client.user.username, message.guild.me.permissions.missing(expt.options.permissions.client).join('` `')))
-				if (message.guild.me.permissionsIn(message.channel).missing(expt.options.permissions.client).length > 0) return message.channel.send(contents['no-client-channel-perms'](message.member, client.user.username, message.guild.me.permissionsIn(message.channel).missing(expt.options.permissions.client).join('` `')))
+				if (message.guild.me.permissions.missing(expt.options.permissions.client).length > 0) return message.channel.send(contents['no-client-perms'](message.member.toString(), client.user.username, message.guild.me.permissions.missing(expt.options.permissions.client).join('` `')))
+				if (message.guild.me.permissionsIn(message.channel).missing(expt.options.permissions.client).length > 0) return message.channel.send(contents['no-client-channel-perms'](message.member.toString(), client.user.username, message.guild.me.permissionsIn(message.channel).missing(expt.options.permissions.client).join('` `')))
 			}
 
 			// Exec
@@ -212,7 +212,7 @@ module.exports = class Commands {
      */
 	get (name, arg) {
 		const command = this.array.find(({ options }) => [options.name, ...options.aliases].includes(name))
-		return (arg && command.options.modules.find(({ options }) => [options.name, ...options.aliases].includes(arg))) || command
+		return (command && arg && command.options.modules.find(({ options }) => [options.name, ...options.aliases].includes(arg))) || command
 	}
 
 	/**
