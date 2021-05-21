@@ -1,12 +1,9 @@
-module.exports = {
-	manager: class RateLimitEvent {
-		/**
-         * @param {Function} listener 
-         * @param {Object} param1 
-         */
-		constructor (listener, { client }) {
-			client.on('rateLimit', (info) => listener({ client, info }))
-		}
-	},
-	defaultOptions: {}
+module.exports = class RateLimitEvent {
+	/**
+     * @param { function } listener 
+     * @param { object } param1 
+     */
+	constructor (listener, { client }) {
+		client.on('rateLimit', (info) => listener({ client, info }))
+	}
 }

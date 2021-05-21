@@ -5,32 +5,30 @@ declare module 'discord-echidna' {
 
 	export class Commands {
 		constructor (echidna: Echidna, options: CommandsOptions)
-		public array: Array<{ exec: (params: Command['exec']) => void; options: Command['options']; help?: any }>
-		public cooldowns: Object
+		public array: { exec: (params: Command['exec']) => void; options: Command['options']; help?: any }[]
+		public cooldowns: object
 		public create (exec: (params: Command['exec']) => void, options: Command['options'], help?: any): void
-		public get (name: String, arg?: String): { exec: (params: Command['exec']) => void; options: Command['options']; help?: any }
-		public exist (...names: Array<String>): Boolean
+		public get (name: string, arg?: string): { exec: (params: Command['exec']) => void; options: Command['options']; help?: any }
+		public exist (...names: string[]): boolean
 	}
 
 	export class Echidna {
-		constructor (token: String, EchidnaOptions?: EchidnaOptions)
+		constructor (token: string, EchidnaOptions?: EchidnaOptions)
 		public client: Discord.Client
 		public options: EchidnaOptions
 		public on<K extends keyof Events> (event: K, listener?: (params: Listeners[K]) => void): Events[K]
-		public on<K extends keyof EventsWithOptions> (event: K, listener?: (params: Listeners[K]) => void, EventOptions?: EventsOptions[K]): Events[K]
 		public commands (options: CommandsOptions): Commands
 	}
 
 	class CollectionsInterface {
-		public array: Array<{ name: String; model: Function }>
-		public add (collectionName: String, model: Object | Array<any>): void
+		public array: { name: string; model: (ID: string) => void }[]
+		public add (collectionName: string, model: object | any[]): void
 	}
 
 	class DatabaseInterface {
-		public Collections: CollectionsInterface
-		public delete (DocumentID: String, collectionName: String): void
-		public exist (DocumentID: String, collectionName: String): Boolean
-		public open (DocumentID: String, collectionName: String): Document
+		public delete (DocumentID: string, collectionName: string): void
+		public exist (DocumentID: string, collectionName: string): boolean
+		public open (DocumentID: string, collectionName: string): Document
 	}
 
 	class UtilInterface {
@@ -51,29 +49,29 @@ declare module 'discord-echidna' {
 		public content: object
 		private options: { ID: string; path: string }
 		public delete (): void
-		public update (source: any, options?: { index?: Number; path?: string }): this
+		public update (source: any, options?: { index?: number; path?: string }): this
 		public save (): void
-		public set (source: any, options?: { index?: Number; path?: string }): this
-		public remove (options?: { index?: Number; path?: string; size?: 1 }): this
+		public set (source: any, options?: { index?: number; path?: string }): this
+		public remove (options?: { index?: number; path?: string; size?: 1 }): this
 		public reset (): this
 	}
 
 	// Events
 
 	class ChannelCreateEvent {
-		constructor (listener: (params: Listeners['channelCreate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['channelCreate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class ChannelDeleteEvent {
-		constructor (listener: (params: Listeners['channelDelete']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['channelDelete']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class ChannelPinsUpdateEvent {
-		constructor (listener: (params: Listeners['channelPinsUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['channelPinsUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class ChannelUpdate {
-		constructor (listener: (params: Listeners['channelUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['channelUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class DebugEvent {
@@ -81,15 +79,15 @@ declare module 'discord-echidna' {
 	}
 
 	class EmojiCreateEvent {
-		constructor (listener: (params: Listeners['emojiCreate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['emojiCreate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class EmojiDeleteEvent {
-		constructor (listener: (params: Listeners['emojiDelete']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['emojiDelete']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class EmojiUpdateEvent {
-		constructor (listener: (params: Listeners['emojiUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['emojiUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class ErrorEvent {
@@ -97,11 +95,11 @@ declare module 'discord-echidna' {
 	}
 
 	class GuildBanAddEvent {
-		constructor (listener: (params: Listeners['guildBanAdd']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['guildBanAdd']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class GuildBanRemoveEvent {
-		constructor (listener: (params: Listeners['guildBanRemove']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['guildBanRemove']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class GuildCreateEvent {
@@ -113,31 +111,31 @@ declare module 'discord-echidna' {
 	}
 
 	class GuildIntegrationsUpdateEvent {
-		constructor (listener: (params: Listeners['guildIntegrationsUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['guildIntegrationsUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class GuildMemberAddEvent {
-		constructor (listener: (params: Listeners['guildMemberAdd']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['guildMemberAdd']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class GuildMemberAvailableEvent {
-		constructor (listener: (params: Listeners['guildMemberAvailable']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['guildMemberAvailable']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class GuildMemberRemoveEvent {
-		constructor (listener: (params: Listeners['guildMemberRemove']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['guildMemberRemove']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class GuildMembersChunkEvent {
-		constructor (listener: (params: Listeners['guildMembersChunk']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['guildMembersChunk']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class GuildMemberSpeakingEvent {
-		constructor (listener: (params: Listeners['guildMemberSpeaking']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['guildMemberSpeaking']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class GuildMemberUpdateEvent {
-		constructor (listener: (params: Listeners['guildMemberUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['guildMemberUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class GuildUnavailableEvent {
@@ -145,7 +143,7 @@ declare module 'discord-echidna' {
 	}
 
 	class GuildUpdateEvent {
-		constructor (listener: (params: Listeners['guildUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['guildUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class InvalidatedEvent {
@@ -153,47 +151,47 @@ declare module 'discord-echidna' {
 	}
 
 	class InviteCreateEvent {
-		constructor (listener: (params: Listeners['inviteCreate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['inviteCreate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class InviteDeleteEvent {
-		constructor (listener: (params: Listeners['inviteDelete']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['inviteDelete']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class MessageEvent {
-		constructor (listener: (params: Listeners['message']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['message']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class MessageDeleteEvent {
-		constructor (listener: (params: Listeners['messageDelete']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['messageDelete']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class MessageDeleteBulkEvent {
-		constructor (listener: (params: Listeners['messageDeleteBulk']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['messageDeleteBulk']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class MessageReactionAddEvent {
-		constructor (listener: (params: Listeners['messageReactionAdd']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['messageReactionAdd']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class MessageReactionRemoveEvent {
-		constructor (listener: (params: Listeners['messageReactionRemove']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['messageReactionRemove']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class MessageReactionRemoveAllEvent {
-		constructor (listener: (params: Listeners['messageReactionRemoveAll']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['messageReactionRemoveAll']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class MessageReactionRemoveEmojiEvent {
-		constructor (listener: (params: Listeners['messageReactionRemoveEmoji']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['messageReactionRemoveEmoji']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class MessageUpdateEvent {
-		constructor (listener: (params: Listeners['messageUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['messageUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class PresenceUpdateEvent {
-		constructor (listener: (params: Listeners['presenceUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['presenceUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class RateLimitEvent {
@@ -205,15 +203,15 @@ declare module 'discord-echidna' {
 	}
 
 	class RoleCreateEvent {
-		constructor (listener: (params: Listeners['roleCreate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['roleCreate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class RoleDeleteEvent {
-		constructor (listener: (params: Listeners['roleDelete']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['roleDelete']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class RoleUpdateEvent {
-		constructor (listener: (params: Listeners['roleUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['roleUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class ShardDisconnectEvent {
@@ -233,15 +231,15 @@ declare module 'discord-echidna' {
 	}
 
 	class TypingStartEvent {
-		constructor (listener: (params: Listeners['typingStart']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['typingStart']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class UserUpdateEvent {
-		constructor (listener: (params: Listeners['userUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['userUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class VoiceStateUpdateEvent {
-		constructor (listener: (params: Listeners['voiceStateUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['voiceStateUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	class WarnEvent {
@@ -249,58 +247,56 @@ declare module 'discord-echidna' {
 	}
 
 	class WebhookUpdateEvent {
-		constructor (listener: (params: Listeners['webhookUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: Array<String> })
+		constructor (listener: (params: Listeners['webhookUpdate']) => void, options: { client: Discord.Client; ignore: Ignore; owners: string[] })
 	}
 
 	// Interfaces
 
 	interface AllowedOrDenyID {
-		users?: Array<String>
-		guilds?: Array<String>
-		channels?: Array<String>
-		roles?: Array<String>
+		users?: string[]
+		guilds?: string[]
+		channels?: string[]
+		roles?: string[]
 	}
 
 	interface Command {
 		exec: {
 			client?: Discord.Client
 			message?: Discord.Message
-			prefix?: String
-			command?: String
-			args?: Array<String>
+			prefix?: string
+			command?: string
+			args?: string[]
 			Database?: DatabaseInterface
 			Collections?: CollectionsInterface
 			Util?: UtilInterface
 			Commands?: Commands
-			options?: { ignore?: Ignore; owners?: Array<String>; lang?: String }
+			options?: { ignore?: Ignore; owners?: string[]; lang?: string }
 		}
 		options: {
-			name: String
-			aliases?: Array<String> | RegExp
-			cooldown?: Number
+			name: string
+			aliases?: string[] | RegExp
+			cooldown?: number
 			permissions?: Permissions
-			modules?: String
+			modules?: string
 			allow?: AllowedOrDenyID
 			deny?: AllowedOrDenyID
 		}
 	}
 
 	interface CommandsOptions {
-		prefixes: String | Array<String> | { collection: String; properties: String }
-		directory: String | { path: String; categories: Boolean }
+		prefixes: string | string[] | { collection: string; properties: string }
+		directory: string | { path: string; categories: boolean }
 	}
 
 	type EchidnaFlags = 'owner'
 
-	interface EchidnaOptions {
-		client?: Discord.ClientOptions
+	interface EchidnaOptions extends Discord.ClientOptions {
 		ignore?: Ignore
-		owners?: Array<String>
+		owners?: string[]
+		lang?: 'fr' | 'en'
 	}
 
-	interface EventsWithOptions {}
-
-	interface Events extends EventsWithOptions {
+	interface Events {
 		channelCreate: ChannelCreateEvent
 		channelDelete: ChannelDeleteEvent
 		channelPinsUpdate: ChannelPinsUpdateEvent
@@ -351,67 +347,65 @@ declare module 'discord-echidna' {
 		webhookUpdate: WebhookUpdateEvent
 	}
 
-	interface EventsOptions {}
-
 	interface Ignore {
 		users?: Array<String>
 		guilds?: Array<String>
 	}
 
 	interface Listeners {
-		channelCreate: { client?: Discord.Client; channel?: Discord.Channel; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		channelDelete: { client?: Discord.Client; channel?: Discord.Channel; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		channelPinsUpdate: { client?: Discord.Client; channel?: Discord.Channel; date?: Date; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		channelUpdate: { client?: Discord.Client; oldChannel?: Discord.Channel; newChannel?: Discord.Channel; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		debug: { client?: Discord.Client; info?: String }
-		emojiCreate: { client?: Discord.Client; emoji?: Discord.Emoji; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		emojiDelete: { client?: Discord.Client; emoji?: Discord.Emoji; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		emojiUpdate: { client?: Discord.Client; oldEmoji?: Discord.Emoji; newEmoji?: Discord.Emoji; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
+		channelCreate: { client?: Discord.Client; channel?: Discord.Channel; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		channelDelete: { client?: Discord.Client; channel?: Discord.Channel; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		channelPinsUpdate: { client?: Discord.Client; channel?: Discord.Channel; date?: Date; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		channelUpdate: { client?: Discord.Client; oldChannel?: Discord.Channel; newChannel?: Discord.Channel; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		debug: { client?: Discord.Client; info?: string }
+		emojiCreate: { client?: Discord.Client; emoji?: Discord.Emoji; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		emojiDelete: { client?: Discord.Client; emoji?: Discord.Emoji; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		emojiUpdate: { client?: Discord.Client; oldEmoji?: Discord.Emoji; newEmoji?: Discord.Emoji; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
 		error: { client?: Discord.Client; error?: Error }
-		guildBanAdd: { client?: Discord.Client; guild?: Discord.Guild; user?: Discord.User; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		guildBanRemove: { client?: Discord.Client; guild?: Discord.Guild; user?: Discord.User; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
+		guildBanAdd: { client?: Discord.Client; guild?: Discord.Guild; user?: Discord.User; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		guildBanRemove: { client?: Discord.Client; guild?: Discord.Guild; user?: Discord.User; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
 		guildCreate: { client?: Discord.Client; guild?: Discord.Guild; Database?: DatabaseInterface }
 		guildDelete: { client?: Discord.Client; guild?: Discord.Guild; Database?: DatabaseInterface }
-		guildIntegrationsUpdate: { client?: Discord.Client; guild?: Discord.Guild; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		guildMemberAdd: { client?: Discord.Client; member?: Discord.GuildMember; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		guildMemberAvailable: { client?: Discord.Client; member?: Discord.GuildMember; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		guildMemberRemove: { client?: Discord.Client; member?: Discord.GuildMember; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		guildMembersChunk: { client?: Discord.Client; members?: Discord.Collection<Discord.Snowflake, Discord.GuildMember>; guild?: Discord.Guild; chunk?: { index?: Number; count?: Number; nonce?: String }; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		guildMemberSpeaking: { client?: Discord.Client; member?: Discord.GuildMember; readonly speaking: Discord.Speaking; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		guildMemberUpdate: { client?: Discord.Client; oldMember?: Discord.GuildMember; newMember?: Discord.GuildMember; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
+		guildIntegrationsUpdate: { client?: Discord.Client; guild?: Discord.Guild; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		guildMemberAdd: { client?: Discord.Client; member?: Discord.GuildMember; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		guildMemberAvailable: { client?: Discord.Client; member?: Discord.GuildMember; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		guildMemberRemove: { client?: Discord.Client; member?: Discord.GuildMember; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		guildMembersChunk: { client?: Discord.Client; members?: Discord.Collection<Discord.Snowflake, Discord.GuildMember>; guild?: Discord.Guild; chunk?: { index?: number; count?: number; nonce?: string }; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		guildMemberSpeaking: { client?: Discord.Client; member?: Discord.GuildMember; readonly speaking: Discord.Speaking; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		guildMemberUpdate: { client?: Discord.Client; oldMember?: Discord.GuildMember; newMember?: Discord.GuildMember; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
 		guildUnavailable: { client?: Discord.Client; guild?: Discord.Guild; Database?: DatabaseInterface }
-		guildUpdate: { client?: Discord.Client; oldGuild?: Discord.Guild; newGuild?: Discord.Guild; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
+		guildUpdate: { client?: Discord.Client; oldGuild?: Discord.Guild; newGuild?: Discord.Guild; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
 		invalidated: { client?: Discord.Client }
-		inviteCreate: { client?: Discord.Client; invite?: Discord.Invite; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		inviteDelete: { client?: Discord.Client; invite?: Discord.Invite; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		message: { client?: Discord.Client; message?: Discord.Message; options?: { ignore?: Ignore; owners?: Array<String> } }
-		messageDelete: { client?: Discord.Client; message?: Discord.Message; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		messageDeleteBulk: { client?: Discord.Client; messages?: Discord.Collection<Discord.Snowflake, Discord.Message>; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		messageReactionAdd: { client?: Discord.Client; reaction?: Discord.MessageReaction; user?: Discord.User; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		messageReactionRemove: { client?: Discord.Client; reaction?: Discord.MessageReaction; user?: Discord.User; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		messageReactionRemoveAll: { client?: Discord.Client; message?: Discord.Message; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		messageReactionRemoveEmoji: { client?: Discord.Client; reaction?: Discord.MessageReaction; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		messageUpdate: { client?: Discord.Client; oldMessage?: Discord.Message; newMessage?: Discord.Message; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		presenceUpdate: { client?: Discord.Client; oldPresence?: Discord.Presence; newPresence?: Discord.Presence; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		rateLimit: { client?: Discord.Client; info?: { timeout?: Number; limit?: Number; method?: String; path?: String; route?: String } }
+		inviteCreate: { client?: Discord.Client; invite?: Discord.Invite; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		inviteDelete: { client?: Discord.Client; invite?: Discord.Invite; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		message: { client?: Discord.Client; message?: Discord.Message; options?: { ignore?: Ignore; owners?: string[] } }
+		messageDelete: { client?: Discord.Client; message?: Discord.Message; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		messageDeleteBulk: { client?: Discord.Client; messages?: Discord.Collection<Discord.Snowflake, Discord.Message>; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		messageReactionAdd: { client?: Discord.Client; reaction?: Discord.MessageReaction; user?: Discord.User; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		messageReactionRemove: { client?: Discord.Client; reaction?: Discord.MessageReaction; user?: Discord.User; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		messageReactionRemoveAll: { client?: Discord.Client; message?: Discord.Message; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		messageReactionRemoveEmoji: { client?: Discord.Client; reaction?: Discord.MessageReaction; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		messageUpdate: { client?: Discord.Client; oldMessage?: Discord.Message; newMessage?: Discord.Message; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		presenceUpdate: { client?: Discord.Client; oldPresence?: Discord.Presence; newPresence?: Discord.Presence; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		rateLimit: { client?: Discord.Client; info?: { timeout?: number; limit?: number; method?: string; path?: string; route?: string } }
 		ready: { client?: Discord.Client; Database?: DatabaseInterface; Collections?: CollectionsInterface }
-		roleCreate: { client?: Discord.Client; role?: Discord.Role; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		roleDelete: { client?: Discord.Client; role?: Discord.Role; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		roleUpdate: { client?: Discord.Client; oldRole?: Discord.Role; newRole?: Discord.Role; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		shardDisconnect: { client?: Discord.Client; event?: Discord.CloseEvent; id?: Number }
-		shardError: { client?: Discord.Client; error?: Error; id?: Number }
-		shardReady: { client?: Discord.Client; id?: Number; unavailableGuilds?: Set<String> }
-		shardResume: { client?: Discord.Client; id?: Number; replayedEvents?: Number }
-		typingStart: { client?: Discord.Client; channel?: Discord.Channel; user?: Discord.User; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		userUpdate: { client?: Discord.Client; oldUser?: Discord.User; newUser?: Discord.User; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		voiceStateUpdate: { client?: Discord.Client; oldState?: Discord.VoiceState; newState?: Discord.VoiceState; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
-		warn: { client?: Discord.Client; info?: String }
-		webhookUpdate: { client?: Discord.Client; channel?: Discord.Channel; options?: { ignore?: Ignore; owners?: Array<String> }; Database?: DatabaseInterface }
+		roleCreate: { client?: Discord.Client; role?: Discord.Role; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		roleDelete: { client?: Discord.Client; role?: Discord.Role; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		roleUpdate: { client?: Discord.Client; oldRole?: Discord.Role; newRole?: Discord.Role; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		shardDisconnect: { client?: Discord.Client; event?: Discord.CloseEvent; id?: number }
+		shardError: { client?: Discord.Client; error?: Error; id?: number }
+		shardReady: { client?: Discord.Client; id?: number; unavailableGuilds?: Set<String> }
+		shardResume: { client?: Discord.Client; id?: number; replayedEvents?: number }
+		typingStart: { client?: Discord.Client; channel?: Discord.Channel; user?: Discord.User; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		userUpdate: { client?: Discord.Client; oldUser?: Discord.User; newUser?: Discord.User; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		voiceStateUpdate: { client?: Discord.Client; oldState?: Discord.VoiceState; newState?: Discord.VoiceState; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
+		warn: { client?: Discord.Client; info?: string }
+		webhookUpdate: { client?: Discord.Client; channel?: Discord.Channel; options?: { ignore?: Ignore; owners?: string[] }; Database?: DatabaseInterface }
 	}
 
 	interface Permissions {
-		users?: Array<Discord.PermissionString>
-		client?: Array<Discord.PermissionString>
-		flags?: Array<EchidnaFlags>
+		users?: Discord.PermissionString[]
+		client?: Discord.PermissionString[]
+		flags?: EchidnaFlags[]
 	}
 }

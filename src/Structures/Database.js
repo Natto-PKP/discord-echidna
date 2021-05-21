@@ -5,11 +5,12 @@ const Document = require('../Managers/Document')
 const path = './database'
 
 module.exports = new class Database {
-	Collections = Collections
-
 	/**
-     * @param {String} DocumentID 
-     * @param {String} collectionName 
+	 * Delete a document
+     * @param { string } DocumentID 
+     * @param { string } collectionName 
+	 * @example 
+	 * Database.delete('1234', 'user-exp')
      */
 	delete (DocumentID, collectionName) {
 		if (!DocumentID || typeof DocumentID !== 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'DocumentID', 'string')
@@ -20,9 +21,12 @@ module.exports = new class Database {
 	}
 
 	/**
-     * @param {String} DocumentID 
-     * @param {String} collectionName 
-     * @returns 
+	 * Check if document exist
+     * @param { string } DocumentID 
+     * @param { string } collectionName 
+	 * @example 
+	 * Database.exist('1234', 'user-exp')
+     * @returns { boolean }
      */
 	exist (DocumentID, collectionName) {
 		if (!DocumentID || typeof DocumentID !== 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'DocumentID', 'string')
@@ -33,9 +37,12 @@ module.exports = new class Database {
 	}
 
 	/**
-     * @param {String} DocumentID 
-     * @param {String} collectionName 
-     * @returns 
+	 * Open a document
+     * @param { string } DocumentID 
+     * @param { string } collectionName 
+	 * @example 
+	 * Database.open('1234', 'user-exp')
+     * @returns { Document }
      */
 	open (DocumentID, collectionName) {
 		if (!DocumentID || typeof DocumentID !== 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'DocumentID', 'string')

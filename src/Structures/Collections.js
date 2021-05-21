@@ -5,8 +5,10 @@ module.exports = new class Collections {
 
 	/**
      * Add a new collection format for Database system
-     * @param {String} collectionName 
-     * @param {Object|Array<*>} model 
+     * @param { string } collectionName 
+     * @param { object | any[] } model 
+	 * @example 
+	 * Collections.add('user-exp', { level: 0, exp: 0 })
      */
 	add (collectionName, model) {
 		if (!collectionName || typeof collectionName !== 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'collectionName', 'string')

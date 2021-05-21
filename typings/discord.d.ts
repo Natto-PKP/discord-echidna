@@ -2,38 +2,38 @@ declare module 'discord.js' {
 	import Discord from 'discord.js'
 
 	interface ChannelManager {
-		select(search: String, options?: { strict?: Boolean; type?: String | Boolean }): Discord.Channel
+		select(search: string, options?: { strict?: boolean; type?: string }): Discord.Channel
 	}
 
 	interface GuildChannelManager {
-		select(search: String, options?: { strict?: Boolean; type?: String | Boolean }): Discord.GuildChannel
+		select(search: string, options?: { strict?: boolean; type?: string }): Discord.GuildChannel
 	}
 
 	interface GuildEmojiManager {
-		select(search: String, options?: { strict?: Boolean }): Discord.Emoji
+		select(search: string, options?: { strict?: boolean }): Discord.Emoji
 	}
 
 	interface GuildManager {
-		select(search: String, options?: { strict?: Boolean }): Discord.Guild
+		select(search: string, options?: { strict?: boolean }): Discord.Guild
 	}
 
 	interface GuildMemberManager {
-		select(search: String, options?: { strict?: Boolean }): Discord.GuildMember
+		select(search: string, options?: { strict?: boolean }): Discord.GuildMember
 	}
 
 	interface GuildMemberRoleManager {
-		select(search: String, options?: { strict?: Boolean }): Discord.Role
+		select(search: string, options?: { strict?: boolean }): Discord.Role
 	}
 
 	interface Message {
-		createPage(array: Discord.Collection<String, Object> | Array<any>, format: (array: Array<any>, pages: { number: Number; total: Number }) => void, options: { limit: Number; emojis?: Array<String> }, collectorOptions?: Discord.ReactionCollectorOptions): Discord.Message
+		createPages(array: Discord.Collection<string, object> | any[], format: (array: any[], pages: { number: number; total: number }) => void, options: { limit: number; emojis?: string[] }, collectorOptions?: Discord.ReactionCollectorOptions): Discord.Message
 	}
 
 	interface RoleManager {
-		select(search: String, options?: { strict?: Boolean }): Discord.Role
+		select(search: string, options?: { strict?: boolean }): Discord.Role
 	}
 
 	interface UserManager {
-		select(search: String, options?: { strict?: Boolean }): Discord.User
+		select(search: string, options?: { strict?: boolean }): Discord.User
 	}
 }

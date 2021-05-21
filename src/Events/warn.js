@@ -1,12 +1,9 @@
-module.exports = {
-	manager: class WarnEvent {
-		/**
-         * @param {Function} listener 
-         * @param {Object} param1 
-         */
-		constructor (listener, { client }) {
-			client.on('warn', (info) => listener({ client, info }))
-		}
-	},
-	defaultOptions: {}
+module.exports = class WarnEvent {
+	/**
+     * @param { function } listener 
+     * @param { object } param1 
+     */
+	constructor (listener, { client }) {
+		client.on('warn', (info) => listener({ client, info }))
+	}
 }

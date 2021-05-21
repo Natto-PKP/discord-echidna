@@ -14,9 +14,9 @@ const Util = require('../Utils')
 
 // Functions
 /**
- * @param {object} exec 
- * @param {object} options 
- * @returns {object}
+ * @param { object } exec 
+ * @param { object } options 
+ * @returns { object }
  */
 const commandCheck = (exec, options) => {
 	if (!exec || typeof exec != 'function') throw new TypeError('ECHIDNA_INVALID_OPTION', 'exec', 'function')
@@ -44,14 +44,8 @@ const commandCheck = (exec, options) => {
 
 module.exports = class Commands {
 	/**
-	 * @param {Echidna} echidna 
-	 * @param {Object} param1 
-	 * @param {String|Array<String>|Object} [param1.prefixes] 
-	 * @param {String} [param1.prefixes.collection] 
-	 * @param {String} [param1.prefixes.properties] 
-	 * @param {String|Object} [param1.directory] 
-	 * @param {String} [param1.directory.path] 
-	 * @param {Boolean} [param1.directory.categories]
+	 * @param { Echidna } echidna 
+	 * @param { import('discord-echidna').CommandsOptions }
 	 */
 	constructor (echidna, { prefixes = '!', directory } = {}) {
 		this.array = []
@@ -150,8 +144,8 @@ module.exports = class Commands {
 			// Permissions
 			if (expt.options.permissions.users.length > 0 && !owners.includes(message.author.id) && message.member.permissions.missing(expt.options.permissions.users).length > 0) return message.channel.send(contents['no-member-perms'](message.member.toString(), message.member.permissions.missing(expt.options.permissions.users).join('` `')))
 			if (expt.options.permissions.client.length > 0) {
-				if (message.guild.me.permissions.missing(expt.options.permissions.client).length > 0) return message.channel.send(contents['no-client-perms'](message.member.toString(), client.user.username, message.guild.me.permissions.missing(expt.options.permissions.client).join('` `')))
-				if (message.guild.me.permissionsIn(message.channel).missing(expt.options.permissions.client).length > 0) return message.channel.send(contents['no-client-channel-perms'](message.member.toString(), client.user.username, message.guild.me.permissionsIn(message.channel).missing(expt.options.permissions.client).join('` `')))
+				const perms = message.guild.me.permissions.missing().concat(...message.guild.me.permissionsIn(message.channel).missing())
+				if (perms.length) return message.channel.send(contents['no-client-perms'](message.member.toString(), client.user.username, perms.join('` `')))
 			}
 
 			// Exec
@@ -161,27 +155,15 @@ module.exports = class Commands {
 	}
 
 	/**
-     * @param {Function} exec 
-     * @param {any} options 
-     * @param {String} [options.name] 
-     * @param {Object[]|RegExp} [options.aliases] 
-     * @param {Number} [options.cooldown] 
-     * @param {String} [options.modules] 
-     * @param {any} [options.permissions]
-     * @param {Object[]} [options.permissions.users] Table of users permissions required
-     * @param {Object[]} [options.permissions.client] Table of client permissions required
-     * @param {Object[]} [options.permissions.flags] 
-     * @param {any} [options.allow] Table of allowed ids
-     * @param {Object[]} [options.allow.users]
-     * @param {Object[]} [options.allow.channels]
-     * @param {Object[]} [options.allow.guilds]
-     * @param {Object[]} [options.allow.roles]
-     * @param {any} [options.deny] Table of denied ids
-     * @param {Object[]} [options.deny.users]
-     * @param {Object[]} [options.deny.channels]
-     * @param {Object[]} [options.deny.guilds]
-     * @param {Object[]} [options.deny.roles]
-     * @param {any} help  Custom for help command
+	 * Create a new command
+     * @param { function } exec 
+	 * @param { import('discord-echidna').Command['options'] } options 
+	 * @param { any } help
+	 * @example
+	 * Commands.create(
+	 * 	({ message }) => message.reply('world !')
+	 *  { name: 'hello' }
+	 * )
      */
 	create (exec, options, help) {
 		// Check command params
@@ -206,18 +188,19 @@ module.exports = class Commands {
 	}
 
 	/**
-     * @param {String} name 
-     * @param {String} arg 
-     * @returns
+	 * Get a command or command module
+     * @param { string } name 
+     * @param { string } subname 
+     * @returns { object }
      */
-	get (name, arg) {
+	get (name, subname) {
 		const command = this.array.find(({ options }) => [options.name, ...options.aliases].includes(name))
-		return (command && arg && command.options.modules.find(({ options }) => [options.name, ...options.aliases].includes(arg))) || command
+		return (command && subname && command.options.modules.find(({ options }) => [options.name, ...options.aliases].includes(subname))) || command
 	}
 
 	/**
-     * @param  {...Array<String>} names 
-     * @returns 
+     * @param  { ...string[] } names 
+     * @returns { boolean }
      */
 	exist (...names) {
 		return this.array.some(({ options: { name, aliases } }) => [name, ...aliases].some((str) => names.includes(str)))

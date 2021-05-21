@@ -36,7 +36,7 @@ module.exports = class Util {
 
 		for (const [key, value] of Object.entries(source)) {
 			if (Array.isArray(target[key])) target[key] = Array.isArray(value) ? [...target[key], ...value] : [...target[key], value]
-			else if (typeof target[key] == 'object' && Object.hasOwnProperty.call(target, key)) target[key] = Util.assembly(target[key] || {}, value)
+			else if (typeof target[key] == 'object' && target[key] !== null && Object.hasOwnProperty.call(target, key)) target[key] = Util.assembly(target[key] || {}, value)
 			else target[key] = value
 		}
 		return target

@@ -2,6 +2,11 @@ const { existsSync, writeFileSync, unlinkSync } = require('fs')
 const { TypeError, Error } = require('../Errors/EchidnaError')
 const { assembly } = require('../Utils')
 
+/**
+ * @param { any } target 
+ * @param { object | any[] } source 
+ * @returns 
+ */
 const _update = (target, source) => {
 	if (Array.isArray(target)) return Array.isArray(source) ? [...target, ...source] : [...target, source]
 	else if (typeof source == 'object') return typeof target == 'object' ? assembly(target || {}, source) : source
@@ -13,9 +18,9 @@ module.exports = class Document {
 
 	/**
 	 * @param { object } param0 
-	 * @param { string } [param1.index]
-	 * @param { string } [param1.index]
-	 * @param { object } [param1.index]
+	 * @param { string } [param1.ID]
+	 * @param { string } [param1.path]
+	 * @param { object } [param1.collection]
 	 */
 	constructor ({ ID, path, collection }) {
 		this.collection = collection
@@ -33,9 +38,11 @@ module.exports = class Document {
 	/**
 	 * Update current values and set new values
 	 * @param { any } source 
-	 * @param { Object } param1 
+	 * @param { object } param1 
 	 * @param { number } [param1.index]
 	 * @param { string } [param1.path]
+	 * @example
+	 * Document.update([1, 2, 3], { path: 'obj.arr' }) 
 	 * @returns { Document }
 	 */
 	update (source, { index, path } = {}) {
@@ -78,6 +85,8 @@ module.exports = class Document {
 	 * @param { object } param1 
 	 * @param { number } [param1.index]
 	 * @param { string } [param1.path]
+	 * @example
+	 * Document.set('!', { path: 'prefix' })
 	 * @returns { Document }
 	 */
 	set (source, { index, path } = {}) {
@@ -112,6 +121,8 @@ module.exports = class Document {
 	 * @param { string } [param0.path]
 	 * @param { number } [param0.index]
 	 * @param { number } [param0.size]
+	 * @example
+	 * Document.remove({ path: 'obj.arr' })
 	 * @return { Document }
 	 */
 	remove ({ path, index, size = 1 } = {}) {
