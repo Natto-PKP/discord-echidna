@@ -112,7 +112,7 @@ module.exports = class Commands {
 
 			// Set arguments
 			const reg = message.content.toLowerCase().match(`^(<@!?${client.user.id}> (?= *)|${Array.isArray(_prefix) ? '(' + _prefix.map((str) => Util.parseToRegexp(str)).join('|') + ')' : Util.parseToRegexp(_prefix)}(?=[A-Za-z-]))`)
-			const [prefix, command, ...args] = reg ? [reg[0], ...message.content.slice(reg[0].length).trim().split(/\s+/g)] : [, ...message.content.split(/\s+/g)]
+			const [prefix, command, ...args] = reg ? [reg[0], ...message.content.toLowerCase().slice(reg[0].length).trim().split(/\s+/g)] : [, ...message.content.toLowerCase().split(/\s+/g)]
 
 			// Search command
 			const expt = prefix && prefix.length && this.get(command, args[0])

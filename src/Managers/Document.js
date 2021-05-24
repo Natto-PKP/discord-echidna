@@ -1,4 +1,5 @@
 const { existsSync, writeFileSync, unlinkSync } = require('fs')
+
 const { TypeError, Error } = require('../Errors/EchidnaError')
 const { assembly } = require('../Utils')
 
@@ -13,6 +14,8 @@ const _update = (target, source) => {
 	else return source
 }
 
+const timeouts = {}
+
 module.exports = class Document {
 	#options
 
@@ -26,6 +29,13 @@ module.exports = class Document {
 		this.collection = collection
 		this.content = require('../../../.' + path)
 		this.#options = { ID, path }
+
+		if (!timeouts[collection.name + ID]) {
+			timeouts[collection.name + ID] = setTimeout(() => {
+				delete require.cache[require.resolve(path)]
+				delete timeouts[collection.name + ID]
+			}, 6e5)
+		} else timeouts[collection.name + ID].refresh()
 	}
 
 	/**
@@ -39,7 +49,7 @@ module.exports = class Document {
 	 * Update current values and set new values
 	 * @param { any } source 
 	 * @param { object } param1 
-	 * @param { number } [param1.index]
+	 * @param { number | function } [param1.index]
 	 * @param { string } [param1.path]
 	 * @example
 	 * Document.update([1, 2, 3], { path: 'obj.arr' }) 
@@ -49,9 +59,9 @@ module.exports = class Document {
 		if (!source) throw new TypeError('ECHIDNA_INVALID_OPTION', 'source', 'any')
 
 		if (Array.isArray(this.content)) {
-			if (typeof index == 'number') {
+			if (['number', 'function'].includes(typeof index)) {
+				index = typeof index == 'function' ? this.content.findIndex(index) : Math.floor(index)
 				if (0 > index || index > this.content.length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
-				index = parseInt(index)
 				if (Array.isArray(this.content[index])) this.content[index] = Array.isArray(source) ? [...this.content[index], ...source] : [...this.content[index], source]
 				else if (typeof path == 'string') path.split('.').reduce((acc, prop, i, arr) => (acc[prop] = i < arr.length - 1 ? (Object.hasOwnProperty.call(acc, prop) ? acc[prop] : {}) : _update(acc[prop], source)), this.content[index])
 				else this.content[index] = _update(this.content[index], source)
@@ -60,9 +70,10 @@ module.exports = class Document {
 			if (typeof path == 'string') {
 				path.split('.').reduce((acc, prop, i, arr) => {
 					if (i < arr.length - 1) return Object.hasOwnProperty.call(acc, prop) ? acc[prop] : (acc[prop] = {})
-					if (Array.isArray(acc[prop]) && typeof index == 'number') {
+					if (Array.isArray(acc[prop]) && ['number', 'function'].includes(typeof index)) {
+						index = typeof index == 'function' ? this.content.findIndex(index) : Math.floor(index)
 						if (0 > index || index > acc[prop].length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
-						return (acc[prop][parseInt(index)] = _update(acc[prop][parseInt(index)], source))
+						return (acc[prop][index] = _update(acc[prop][index], source))
 					} else return (acc[prop] = _update(acc[prop], source))
 				}, this.content)
 			} else this.content = _update(this.content, source)
@@ -83,7 +94,7 @@ module.exports = class Document {
 	 * Replace current values and set new values
 	 * @param { any } source 
 	 * @param { object } param1 
-	 * @param { number } [param1.index]
+	 * @param { number | function } [param1.index]
 	 * @param { string } [param1.path]
 	 * @example
 	 * Document.set('!', { path: 'prefix' })
@@ -93,9 +104,9 @@ module.exports = class Document {
 		if (!source) throw new TypeError('ECHIDNA_INVALID_OPTION', 'source', 'any')
 
 		if (Array.isArray(this.content)) {
-			if (typeof index == 'number') {
+			if (['number', 'function'].includes(typeof index)) {
+				index = typeof index == 'function' ? this.content.findIndex(index) : Math.floor(index)
 				if (0 > index || index > this.content.length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
-				index = parseInt(index)
 				if (Array.isArray(this.content[index]) || typeof this.content[index] != 'object') this.content[index] = source
 				else if (typeof path == 'string') path.split('.').reduce((acc, prop, i, arr) => (acc[prop] = i < arr.length - 1 ? (Object.hasOwnProperty.call(acc, prop) ? acc[prop] : {}) : source), this.content[index])
 				else this.content[index] = source
@@ -104,9 +115,10 @@ module.exports = class Document {
 			if (typeof path == 'string') {
 				path.split('.').reduce((acc, prop, i, arr) => {
 					if (i < arr.length - 1) return Object.hasOwnProperty.call(acc, prop) ? acc[prop] : (acc[prop] = {})
-					if (Array.isArray(acc[prop]) && typeof index == 'number') {
+					if (Array.isArray(acc[prop]) && ['number', 'function'].includes(typeof index)) {
+						index = typeof index == 'function' ? this.content.findIndex(index) : Math.floor(index)
 						if (0 > index || index > acc[prop].length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
-						return (acc[prop][parseInt(index)] = source)
+						return (acc[prop][index] = source)
 					} else return (acc[prop] = source)
 				}, this.content)
 			} else this.content = typeof source == 'object' && !Array.isArray(source) ? source : { key: source }
@@ -119,7 +131,7 @@ module.exports = class Document {
 	 * Remove values
 	 * @param { object } param0 
 	 * @param { string } [param0.path]
-	 * @param { number } [param0.index]
+	 * @param { number | function } [param0.index]
 	 * @param { number } [param0.size]
 	 * @example
 	 * Document.remove({ path: 'obj.arr' })
@@ -127,9 +139,9 @@ module.exports = class Document {
 	 */
 	remove ({ path, index, size = 1 } = {}) {
 		if (Array.isArray(this.content)) {
-			if (typeof index != 'number') throw new TypeError('ECHIDNA_INVALID_OPTION', 'index', 'number')
+			if (!['number', 'function'].includes(typeof index)) throw new TypeError('ECHIDNA_INVALID_OPTION', 'index', 'number|function')
+			index = typeof index == 'function' ? this.content.findIndex(index) : Math.floor(index)
 			if (0 > index || index > this.content.length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
-			index = parseInt(index)
 			if (typeof path == 'string') {
 				path.split('.').reduce((acc, prop, i, arr) => {
 					if (!Object.hasOwnProperty.call(acc, prop)) throw new Error('ECHIDNA_INVALID_PATH', 'Object.' + prop)
@@ -142,9 +154,10 @@ module.exports = class Document {
 			path.split('.').reduce((acc, prop, i, arr) => {
 				if (!Object.hasOwnProperty.call(acc, prop)) throw new Error('ECHIDNA_INVALID_PATH', 'Object.' + prop)
 				if (i < arr.length - 1) return acc[prop]
-				if (Array.isArray(acc[prop]) && typeof index == 'number') {
+				if (Array.isArray(acc[prop]) && ['number', 'function'].includes(typeof index)) {
+					index = typeof index == 'function' ? this.content.findIndex(index) : Math.floor(index)
 					if (0 > index || index >= this.content.length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
-					acc[prop].splice(parseInt(index), typeof size == 'number' ? parseInt(size) : 1)
+					acc[prop].splice(index, typeof size == 'number' ? parseInt(size) : 1)
 					return acc[prop]
 				} else delete acc[prop]
 			}, this.content)
@@ -158,7 +171,7 @@ module.exports = class Document {
      * @returns { Document }
      */
 	reset () {
-		writeFileSync(this.#options.path, JSON.stringify((this.content = this.collection.model(this.#options.ID))))
+		this.content = this.collection.model(this.#options.ID)
 		return this
 	}
 }

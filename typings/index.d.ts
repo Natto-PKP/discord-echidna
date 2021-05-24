@@ -49,10 +49,10 @@ declare module 'discord-echidna' {
 		public content: object
 		private options: { ID: string; path: string }
 		public delete (): void
-		public update (source: any, options?: { index?: number; path?: string }): this
+		public update (source: any, options?: { index?: number | Function; path?: string }): this
 		public save (): void
-		public set (source: any, options?: { index?: number; path?: string }): this
-		public remove (options?: { index?: number; path?: string; size?: 1 }): this
+		public set (source: any, options?: { index?: number | Function; path?: string }): this
+		public remove (options?: { index?: number | Function; path?: string; size?: 1 }): this
 		public reset (): this
 	}
 
