@@ -1,6 +1,6 @@
 {
 	"name": "discord-echidna",
-	"version": "2.2.1",
+	"version": "2.2.3",
 	"description": "A structure for discord.js bot",
 	"main": "./src/index.js",
 	"types": "./typings/index.d.ts",

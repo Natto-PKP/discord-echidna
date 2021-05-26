@@ -32,7 +32,7 @@ module.exports = class Document {
 
 		if (!timeouts[collection.name + ID]) {
 			timeouts[collection.name + ID] = setTimeout(() => {
-				delete require.cache[require.resolve(path)]
+				delete require.cache[require.resolve('../../../.' + path)]
 				delete timeouts[collection.name + ID]
 			}, 6e5)
 		} else timeouts[collection.name + ID].refresh()
@@ -56,7 +56,7 @@ module.exports = class Document {
 	 * @returns { Document }
 	 */
 	update (source, { index, path } = {}) {
-		if (!source) throw new TypeError('ECHIDNA_INVALID_OPTION', 'source', 'any')
+		if (typeof source == 'undefined') throw new TypeError('ECHIDNA_INVALID_OPTION', 'source', 'any')
 
 		if (Array.isArray(this.content)) {
 			if (['number', 'function'].includes(typeof index)) {
