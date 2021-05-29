@@ -27,7 +27,7 @@ module.exports = class Document {
 	 */
 	constructor ({ ID, path, collection }) {
 		this.collection = collection
-		this.content = require('../../../.' + path)
+		this.cache = require('../../../.' + path)
 		this.#options = { ID, path }
 
 		if (!timeouts[collection.name + ID]) {
@@ -58,25 +58,25 @@ module.exports = class Document {
 	update (source, { index, path } = {}) {
 		if (typeof source == 'undefined') throw new TypeError('ECHIDNA_INVALID_OPTION', 'source', 'any')
 
-		if (Array.isArray(this.content)) {
+		if (Array.isArray(this.cache)) {
 			if (['number', 'function'].includes(typeof index)) {
-				index = typeof index == 'function' ? this.content.findIndex(index) : Math.floor(index)
-				if (0 > index || index > this.content.length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
-				if (Array.isArray(this.content[index])) this.content[index] = Array.isArray(source) ? [...this.content[index], ...source] : [...this.content[index], source]
-				else if (typeof path == 'string') path.split('.').reduce((acc, prop, i, arr) => (acc[prop] = i < arr.length - 1 ? (Object.hasOwnProperty.call(acc, prop) ? acc[prop] : {}) : _update(acc[prop], source)), this.content[index])
-				else this.content[index] = _update(this.content[index], source)
-			} else this.content = Array.isArray(source) ? [...this.content, ...source] : [...this.content, source]
-		} else if (typeof this.content == 'object') {
+				index = typeof index == 'function' ? this.cache.findIndex(index) : Math.floor(index)
+				if (0 > index || index > this.cache.length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
+				if (Array.isArray(this.cache[index])) this.cache[index] = Array.isArray(source) ? [...this.cache[index], ...source] : [...this.cache[index], source]
+				else if (typeof path == 'string') path.split('.').reduce((acc, prop, i, arr) => (acc[prop] = i < arr.length - 1 ? (Object.hasOwnProperty.call(acc, prop) ? acc[prop] : {}) : _update(acc[prop], source)), this.cache[index])
+				else this.cache[index] = _update(this.cache[index], source)
+			} else this.cache = Array.isArray(source) ? [...this.cache, ...source] : [...this.cache, source]
+		} else if (typeof this.cache == 'object') {
 			if (typeof path == 'string') {
 				path.split('.').reduce((acc, prop, i, arr) => {
 					if (i < arr.length - 1) return Object.hasOwnProperty.call(acc, prop) ? acc[prop] : (acc[prop] = {})
 					if (Array.isArray(acc[prop]) && ['number', 'function'].includes(typeof index)) {
-						index = typeof index == 'function' ? this.content.findIndex(index) : Math.floor(index)
+						index = typeof index == 'function' ? this.cache.findIndex(index) : Math.floor(index)
 						if (0 > index || index > acc[prop].length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
 						return (acc[prop][index] = _update(acc[prop][index], source))
 					} else return (acc[prop] = _update(acc[prop], source))
-				}, this.content)
-			} else this.content = _update(this.content, source)
+				}, this.cache)
+			} else this.cache = _update(this.cache, source)
 		}
 
 		return this
@@ -86,8 +86,8 @@ module.exports = class Document {
      * Save update in this document
      */
 	save () {
-		if (!this.content || typeof this.content != 'object') throw new TypeError('ECHIDNA_INVALID_DOCUMENT')
-		writeFileSync(this.#options.path, JSON.stringify(this.content))
+		if (!this.cache || typeof this.cache != 'object') throw new TypeError('ECHIDNA_INVALID_DOCUMENT')
+		writeFileSync(this.#options.path, JSON.stringify(this.cache))
 	}
 
 	/**
@@ -103,25 +103,25 @@ module.exports = class Document {
 	set (source, { index, path } = {}) {
 		if (!source) throw new TypeError('ECHIDNA_INVALID_OPTION', 'source', 'any')
 
-		if (Array.isArray(this.content)) {
+		if (Array.isArray(this.cache)) {
 			if (['number', 'function'].includes(typeof index)) {
-				index = typeof index == 'function' ? this.content.findIndex(index) : Math.floor(index)
-				if (0 > index || index > this.content.length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
-				if (Array.isArray(this.content[index]) || typeof this.content[index] != 'object') this.content[index] = source
-				else if (typeof path == 'string') path.split('.').reduce((acc, prop, i, arr) => (acc[prop] = i < arr.length - 1 ? (Object.hasOwnProperty.call(acc, prop) ? acc[prop] : {}) : source), this.content[index])
-				else this.content[index] = source
-			} else this.content = Array.isArray(source) ? source : [source]
-		} else if (typeof this.content == 'object') {
+				index = typeof index == 'function' ? this.cache.findIndex(index) : Math.floor(index)
+				if (0 > index || index > this.cache.length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
+				if (Array.isArray(this.cache[index]) || typeof this.cache[index] != 'object') this.cache[index] = source
+				else if (typeof path == 'string') path.split('.').reduce((acc, prop, i, arr) => (acc[prop] = i < arr.length - 1 ? (Object.hasOwnProperty.call(acc, prop) ? acc[prop] : {}) : source), this.cache[index])
+				else this.cache[index] = source
+			} else this.cache = Array.isArray(source) ? source : [source]
+		} else if (typeof this.cache == 'object') {
 			if (typeof path == 'string') {
 				path.split('.').reduce((acc, prop, i, arr) => {
 					if (i < arr.length - 1) return Object.hasOwnProperty.call(acc, prop) ? acc[prop] : (acc[prop] = {})
 					if (Array.isArray(acc[prop]) && ['number', 'function'].includes(typeof index)) {
-						index = typeof index == 'function' ? this.content.findIndex(index) : Math.floor(index)
+						index = typeof index == 'function' ? this.cache.findIndex(index) : Math.floor(index)
 						if (0 > index || index > acc[prop].length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
 						return (acc[prop][index] = source)
 					} else return (acc[prop] = source)
-				}, this.content)
-			} else this.content = typeof source == 'object' && !Array.isArray(source) ? source : { key: source }
+				}, this.cache)
+			} else this.cache = typeof source == 'object' && !Array.isArray(source) ? source : { key: source }
 		}
 
 		return this
@@ -138,29 +138,29 @@ module.exports = class Document {
 	 * @return { Document }
 	 */
 	remove ({ path, index, size = 1 } = {}) {
-		if (Array.isArray(this.content)) {
+		if (Array.isArray(this.cache)) {
 			if (!['number', 'function'].includes(typeof index)) throw new TypeError('ECHIDNA_INVALID_OPTION', 'index', 'number|function')
-			index = typeof index == 'function' ? this.content.findIndex(index) : Math.floor(index)
-			if (0 > index || index > this.content.length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
+			index = typeof index == 'function' ? this.cache.findIndex(index) : Math.floor(index)
+			if (0 > index || index > this.cache.length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
 			if (typeof path == 'string') {
 				path.split('.').reduce((acc, prop, i, arr) => {
 					if (!Object.hasOwnProperty.call(acc, prop)) throw new Error('ECHIDNA_INVALID_PATH', 'Object.' + prop)
 					if (i < arr.length - 1) return acc[prop]
 					delete acc[prop]
-				}, this.content[index])
-			} else this.content.splice(index, typeof size == 'number' ? parseInt(size) : 1)
-		} else if (typeof this.content == 'object') {
+				}, this.cache[index])
+			} else this.cache.splice(index, typeof size == 'number' ? parseInt(size) : 1)
+		} else if (typeof this.cache == 'object') {
 			if (typeof path != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'path', 'string')
 			path.split('.').reduce((acc, prop, i, arr) => {
 				if (!Object.hasOwnProperty.call(acc, prop)) throw new Error('ECHIDNA_INVALID_PATH', 'Object.' + prop)
 				if (i < arr.length - 1) return acc[prop]
 				if (Array.isArray(acc[prop]) && ['number', 'function'].includes(typeof index)) {
-					index = typeof index == 'function' ? this.content.findIndex(index) : Math.floor(index)
-					if (0 > index || index >= this.content.length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
+					index = typeof index == 'function' ? this.cache.findIndex(index) : Math.floor(index)
+					if (0 > index || index >= this.cache.length) throw new Error('ECHIDNA_INVALID_INDEX', 'array')
 					acc[prop].splice(index, typeof size == 'number' ? parseInt(size) : 1)
 					return acc[prop]
 				} else delete acc[prop]
-			}, this.content)
+			}, this.cache)
 		}
 
 		return this
@@ -171,7 +171,7 @@ module.exports = class Document {
      * @returns { Document }
      */
 	reset () {
-		this.content = this.collection.model(this.#options.ID)
+		this.cache = this.collection.model(this.#options.ID)
 		return this
 	}
 }

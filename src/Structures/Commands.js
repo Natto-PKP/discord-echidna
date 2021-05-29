@@ -7,9 +7,8 @@ const _permissions = require('../permissions.json')
 const { TypeError, Error } = require('../Errors/EchidnaError')
 
 // Classes
-const Collections = require('../Structures/Collections')
-const Database = require('../Structures/Database')
-const Echidna = require('../Structures/Echidna')
+const Collections = require('./Collections')
+const Database = require('./Database')
 const Util = require('../Utils')
 
 // Functions
@@ -44,7 +43,7 @@ const commandCheck = (exec, options) => {
 
 module.exports = class Commands {
 	/**
-	 * @param { Echidna } echidna 
+	 * @param { import('discord-echidna').Echidna } echidna 
 	 * @param { import('discord-echidna').CommandsOptions }
 	 */
 	constructor (echidna, { prefixes = '!', directory } = {}) {

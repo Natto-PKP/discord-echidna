@@ -4,7 +4,7 @@ const { readdirSync } = require('fs')
 const { TypeError, Error } = require('../Errors/EchidnaError')
 const { checkTypings } = require('../Utils')
 
-const Commands = require('../Managers/Commands')
+const Commands = require('./Commands')
 
 const events = {}
 readdirSync('./node_modules/discord-echidna/src/Events').forEach((f) => (events[f.split('.')[0]] = require(`../Events/${f}`)))
@@ -41,12 +41,14 @@ module.exports = class Echidna {
 	 * @param { function } listener
 	 * @example
 	 * Echidna.on('ready', ({ client }) => console.log(client.user.tag + ' start !'))
-	 * @returns 
+	 * @returns { this }
 	 */
 	on (event, listener = () => null) {
 		if (typeof event != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'event', 'string')
 		if (!events[event]) throw new Error('ECHIDNA_EVENT_MISSING', event)
 		if (!listener || typeof listener != 'function') listener = () => null
-		return new events[event](listener, Object.assign(Object.assign(this.options, { client: this.client })))
+		new events[event](listener, Object.assign(Object.assign(this.options, { client: this.client })))
+
+		return this
 	}
 }

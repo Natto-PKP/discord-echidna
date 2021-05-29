@@ -100,41 +100,39 @@ Discord.GuildMemberRoleManager.prototype.select = function (search, { strict = f
  * @async
  * @param { Discord.Collection<string, object> | any[] } array 
  * @param { function } format Function to form pages 
- * @param { object } param2 Options
- * @param { number } [param2.limit] Element limit per page (default: 8)
- * @param { string[] } [param2.emojis] 3 emojis to navigate in menu
- * @param { Discord.ReactionCollectorOptions } collectorOptions 
+ * @param { import('discord.js').PagesOptions } options Options 
  * @example
  * const format = (array, pages) => array.map(role => role.name).join(', ')
  * message.createPages(guild.roles.cache, format, { limit: 30 })
  * @returns { Discord.Message }
  */
-Discord.Message.prototype.createPages = async function (array, format, { limit = 8, emojis = ['◀', '🔴', '▶'] } = {}, collectorOptions = { idle: 30000 }) {
+Discord.Message.prototype.createPages = async function (array, format, options) {
+	if (!options || typeof options != 'object') options = { limit: 8, emojis: ['◀', '🔴', '▶'], idle: 3e4 }
 	if (!array || (!Array.isArray(array) && !(array instanceof Discord.Collection))) throw new TypeError('ECHIDNA_INVALID_OPTION', 'array', 'array|Discord.Collection')
-	if (!format || typeof format != 'function') throw new TypeError('ECHIDNA_INVALID_OPTION', 'format', 'function')
-	if (!limit || typeof limit != 'number' || limit <= 0) throw new TypeError('ECHIDNA_INVALID_OPTION', 'limit', 'number > 0')
+	if (typeof format != 'function') throw new TypeError('ECHIDNA_INVALID_OPTION', 'format', 'function')
+	if (typeof options.limit != 'number' || options.limit <= 0) throw new TypeError('ECHIDNA_INVALID_OPTION', 'limit', 'number > 0')
 	if (this.guild && !this.guild.me.permissionsIn(this.channel).has(3072)) throw new Error('ECHIDNA_DISCORD_PERMS', 'client', '[ADD_REACTIONS, SEND_MESSAGES]')
-	if (!emojis || !Array.isArray(emojis)) throw new TypeError('ECHIDNA_INVALID_OPTION', 'emojis', 'array')
-	if (emojis.length < 3) throw new Error('ECHIDNA_INVALID_LENGTH', 'array', 'emojis', 3)
+	if (!Array.isArray(options.emojis)) throw new TypeError('ECHIDNA_INVALID_OPTION', 'emojis', 'array')
+	if (options.emojis.length < 3) throw new Error('ECHIDNA_INVALID_LENGTH', 'array', 'emojis', 3)
 
 	array = array instanceof Discord.Collection ? array.array() : array
-	const pages = Array.from({ length: Math.ceil(array.length / limit) }, (v, i) => format(array.slice(i * limit, i * limit + limit), { number: i + 1, total: Math.ceil(array.length / limit) }))
+	const pages = Array.from({ length: Math.ceil(array.length / options.limit) }, (v, i) => format(array.slice(i * options.limit, i * options.limit + options.limit), { number: i + 1, total: Math.ceil(array.length / options.limit) }))
 
 	const message = await this.channel.send(pages[0])
 	if (!pages[1]) return message
 
-	for (const e of emojis.slice(0, 3)) await message.react(e)
-	const col = message.createReactionCollector((reaction, user) => emojis.some((e) => [reaction.emoji.name, reaction.emoji.id].includes(e)) && user.id == this.author.id, collectorOptions)
+	for (const e of options.emojis.slice(0, 3)) await message.react(e)
+	const col = message.createReactionCollector((reaction, user) => options.emojis.some((e) => [reaction.emoji.name, reaction.emoji.id].includes(e)) && user.id == this.author.id, options)
 
 	let i = 0
 	col
 		.on('collect', async (reaction, user) => {
 			reaction.users.remove(user).catch(() => null)
-			if ([reaction.emoji.name, reaction.emoji.id].includes(emojis[0])) {
+			if ([reaction.emoji.name, reaction.emoji.id].includes(options.emojis[0])) {
 				pages[i - 1] ? --i : (i = pages.length - 1)
 				await message.edit(pages[i]).catch(() => col.stop('error'))
-			} else if ([reaction.emoji.name, reaction.emoji.id].includes(emojis[1])) col.stop('stop')
-			else if ([reaction.emoji.name, reaction.emoji.id].includes(emojis[2])) {
+			} else if ([reaction.emoji.name, reaction.emoji.id].includes(options.emojis[1])) col.stop('stop')
+			else if ([reaction.emoji.name, reaction.emoji.id].includes(options.emojis[2])) {
 				pages[i + 1] ? ++i : (i = 0)
 				await message.edit(pages[i]).catch(() => col.stop('error'))
 			}

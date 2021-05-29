@@ -26,7 +26,7 @@ declare module 'discord.js' {
 	}
 
 	interface Message {
-		createPages(array: Discord.Collection<string, object> | any[], format: (array: any[], pages: { number: number; total: number }) => void, options: { limit: number; emojis?: string[] }, collectorOptions?: Discord.ReactionCollectorOptions): Discord.Message
+		createPages(array: Discord.Collection<string, object> | any[], format: (array: any[], pages: { number: number; total: number }) => void, options: PagesOptions): Discord.Message
 	}
 
 	interface RoleManager {
@@ -35,5 +35,11 @@ declare module 'discord.js' {
 
 	interface UserManager {
 		select(search: string, options?: { strict?: boolean }): Discord.User
+	}
+
+	// Interfaces
+	interface PagesOptions extends Discord.ReactionCollectorOptions {
+		limit: number
+		emojis?: string[]
 	}
 }

@@ -1,4 +1,4 @@
-const { existsSync, writeFileSync, lstatSync, mkdirSync, unlinkSync } = require('fs')
+const { existsSync, writeFileSync, lstatSync, mkdirSync, unlinkSync, readdirSync } = require('fs')
 const { TypeError, Error } = require('../Errors/EchidnaError')
 const Collections = require('./Collections')
 const Document = require('../Managers/Document')
@@ -45,13 +45,28 @@ module.exports = new class Database {
      * @returns { Document }
      */
 	open (DocumentID, collectionName) {
-		if (!DocumentID || typeof DocumentID !== 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'DocumentID', 'string')
-		if (!collectionName || typeof collectionName !== 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'collectionName', 'string')
+		if (typeof DocumentID !== 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'DocumentID', 'string')
+		if (typeof collectionName !== 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'collectionName', 'string')
 		if (!existsSync(path) || !lstatSync(path).isDirectory()) mkdirSync(path)
 		const collection = Collections.array.find(({ name }) => name == collectionName.replace(/\s+/g, '-'))
 		if (!collection) throw new Error('ECHIDNA_COLLECTION_MISSING', collectionName)
 		if (!existsSync(`${path}/${collection.name}`) || !lstatSync(`${path}/${collection.name}`).isDirectory()) mkdirSync(`${path}/${collection.name}`)
 		if (!existsSync(`${path}/${collection.name}/${DocumentID}.json`)) writeFileSync(`${path}/${collection.name}/${DocumentID}.json`, JSON.stringify(collection.model(DocumentID)))
 		return new Document({ ID: DocumentID, path: `${path}/${collection.name}/${DocumentID}.json`, collection })
+	}
+
+	/** 
+	 * Open all documents of a collection
+	 * @param { string } collectionName 
+	 * @example
+	 * Database.openAll('user-exp')
+	 * @returns 
+	 */
+	openAll (collectionName) {
+		if (typeof collectionName !== 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'collectionName', 'string')
+		const collection = Collections.array.find(({ name }) => name == collectionName.replace(/\s+/g, '-'))
+		if (!collection) throw new Error('ECHIDNA_COLLECTION_MISSING', collectionName)
+		if (!existsSync(path) || !lstatSync(path).isDirectory() || !existsSync(path + '/' + collectionName) || !lstatSync(path + '/' + collectionName).isDirectory()) return []
+		return readdirSync(path + '/' + collectionName).map((file) => new Document({ ID: file.slice(0, file.length - 3), path: path + '/' + collectionName + '/' + file, collection }))
 	}
 }()
