@@ -4,7 +4,7 @@ const { join } = require('path')
 
 // Utils
 const _permissions = require('../permissions.json')
-const { TypeError, Error } = require('../Errors/EchidnaError')
+const { TypeError, Error } = require('../errors/EchidnaError')
 
 // Classes
 const Collections = require('./Collections')
@@ -149,7 +149,7 @@ module.exports = class Commands {
 
 			// Exec
 			this.cooldowns[key] = Date.now() / 1000 + (expt.options.cooldown || 1)
-			expt.exec({ client, message, prefix, command, args, Database, Collections, Util, Commands: this, options: { ignore, owners, lang } })
+			expt.exec({ echidna, client, message, prefix, command, args, Database, Collections, Util, Commands: this })
 		})
 	}
 

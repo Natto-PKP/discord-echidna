@@ -1,6 +1,6 @@
 const { existsSync, writeFileSync, unlinkSync } = require('fs')
 
-const { TypeError, Error } = require('../Errors/EchidnaError')
+const { TypeError, Error } = require('../errors/EchidnaError')
 const { assembly } = require('../Utils')
 
 /**
@@ -42,7 +42,11 @@ module.exports = class Document {
      * Delete this document
      */
 	delete () {
-		if (existsSync(this.#options.path)) unlinkSync(this.#options.path)
+		if (existsSync(this.#options.path)) {
+			unlinkSync(this.#options.path)
+			delete require.cache[require.resolve('../../../.' + this.#options.path)]
+			delete timeouts[this.collection.name + this.#options.ID]
+		}
 	}
 
 	/**

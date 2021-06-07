@@ -1,4 +1,4 @@
-const { TypeError, Error } = require('../Errors/EchidnaError')
+const { TypeError, Error } = require('../errors/EchidnaError')
 
 module.exports = new class Collections {
 	array = []

@@ -1,4 +1,4 @@
-const { TypeError } = require('./Errors/EchidnaError')
+const { TypeError } = require('./errors/EchidnaError')
 
 module.exports = class Util {
 	/**

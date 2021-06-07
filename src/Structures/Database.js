@@ -1,25 +1,10 @@
 const { existsSync, writeFileSync, lstatSync, mkdirSync, unlinkSync, readdirSync } = require('fs')
-const { TypeError, Error } = require('../Errors/EchidnaError')
+const { TypeError, Error } = require('../errors/EchidnaError')
 const Collections = require('./Collections')
-const Document = require('../Managers/Document')
+const Document = require('../managers/Document')
 const path = './database'
 
 module.exports = new class Database {
-	/**
-	 * Delete a document
-     * @param { string } DocumentID 
-     * @param { string } collectionName 
-	 * @example 
-	 * Database.delete('1234', 'user-exp')
-     */
-	delete (DocumentID, collectionName) {
-		if (!DocumentID || typeof DocumentID !== 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'DocumentID', 'string')
-		if (!collectionName || typeof collectionName !== 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'collectionName', 'string')
-		const collection = Collections.array.find(({ name }) => name == collectionName.replace(/\s+/g, '-'))
-		if (!collection) throw new Error('ECHIDNA_COLLECTION_MISSING', collectionName)
-		if (existsSync(`${path}/${collection.name}`) && existsSync(`${path}/${collection.name}/${DocumentID}.json`)) unlinkSync(`${path}/${collection.name}/${DocumentID}.json`)
-	}
-
 	/**
 	 * Check if document exist
      * @param { string } DocumentID 

@@ -1,15 +1,16 @@
 const { Client } = require('discord.js')
-const { readdirSync } = require('fs')
 
-const { TypeError, Error } = require('../Errors/EchidnaError')
+const { TypeError, Error } = require('../errors/EchidnaError')
 const { checkTypings } = require('../Utils')
+const events = require('../echidna/events')
 
+const Collections = require('./Collections')
 const Commands = require('./Commands')
-
-const events = {}
-readdirSync('./node_modules/discord-echidna/src/Events').forEach((f) => (events[f.split('.')[0]] = require(`../Events/${f}`)))
+const Database = require('./Database')
 
 module.exports = class Echidna {
+	#commands
+
 	/**
 	 * Initialize new Echidna client
 	 * @param { string } token Discord bot token
@@ -32,7 +33,7 @@ module.exports = class Echidna {
 	 * @returns { Commands }
 	 */
 	commands ({ prefixes = '!', directory } = {}) {
-		return new Commands(this, { prefixes, directory })
+		return this.#commands instanceof Commands ? this.#commands : (this.#commands = new Commands(this, { prefixes, directory }))
 	}
 
 	/**
@@ -45,9 +46,8 @@ module.exports = class Echidna {
 	 */
 	on (event, listener = () => null) {
 		if (typeof event != 'string') throw new TypeError('ECHIDNA_INVALID_OPTION', 'event', 'string')
-		if (!events[event]) throw new Error('ECHIDNA_EVENT_MISSING', event)
-		if (!listener || typeof listener != 'function') listener = () => null
-		new events[event](listener, Object.assign(Object.assign(this.options, { client: this.client })))
+		if (!events[event]) throw new Error('ECHIDNA_EVENT_MISSING', event) 
+		events[event](typeof listener != 'function' ? listener = () => null : listener, { echidna: this, client: this.client, Database, Collections }) 
 
 		return this
 	}

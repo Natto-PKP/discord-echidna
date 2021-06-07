@@ -5,7 +5,7 @@ declare module 'discord-echidna' {
 		constructor (token: string, EchidnaOptions?: EchidnaOptions)
 		public client: Discord.Client
 		public options: EchidnaOptions
-		public on<K extends keyof Listeners> (event: K, listener?: (params: Listeners[K]) => void): this
+		public on<K extends keyof Events> (event: K, listener?: (params: Events[K] & ListenerBase) => void): this
 		public commands (options: CommandsOptions): Commands
 	}
 
@@ -26,7 +26,6 @@ declare module 'discord-echidna' {
 	}
 
 	class DatabaseInterface {
-		public delete (DocumentID: string, collectionName: string): void
 		public exist (DocumentID: string, collectionName: string): boolean
 		public open (DocumentID: string, collectionName: string): Document
 		public openAll (collectionName: string): Document[]
@@ -94,65 +93,67 @@ declare module 'discord-echidna' {
 		lang?: 'fr' | 'en'
 	}
 
+	interface Events {
+		channelCreate: { channel?: Discord.Channel }
+		channelDelete: { channel?: Discord.Channel }
+		channelPinsUpdate: { channel?: Discord.Channel; date?: Date }
+		channelUpdate: { oldChannel?: Discord.Channel; newChannel?: Discord.Channel }
+		debug: { info?: string }
+		emojiCreate: { emoji?: Discord.Emoji }
+		emojiDelete: { emoji?: Discord.Emoji }
+		emojiUpdate: { oldEmoji?: Discord.Emoji; newEmoji?: Discord.Emoji }
+		error: { error?: Error }
+		guildBanAdd: { guild?: Discord.Guild; user?: Discord.User }
+		guildBanRemove: { guild?: Discord.Guild; user?: Discord.User }
+		guildCreate: { guild?: Discord.Guild }
+		guildDelete: { guild?: Discord.Guild }
+		guildIntegrationsUpdate: { guild?: Discord.Guild }
+		guildMemberAdd: { member?: Discord.GuildMember }
+		guildMemberAvailable: { member?: Discord.GuildMember }
+		guildMemberRemove: { member?: Discord.GuildMember }
+		guildMembersChunk: { members?: Discord.Collection<Discord.Snowflake, Discord.GuildMember>; guild?: Discord.Guild; chunk?: { index?: number; count?: number; nonce?: string } }
+		guildMemberSpeaking: { member?: Discord.GuildMember; readonly speaking: Discord.Speaking }
+		guildMemberUpdate: { oldMember?: Discord.GuildMember; newMember?: Discord.GuildMember }
+		guildUnavailable: { guild?: Discord.Guild; Database?: DatabaseInterface }
+		guildUpdate: { oldGuild?: Discord.Guild; newGuild?: Discord.Guild }
+		invalidated: {}
+		inviteCreate: { invite?: Discord.Invite }
+		inviteDelete: { invite?: Discord.Invite }
+		message: { message?: Discord.Message }
+		messageDelete: { message?: Discord.Message }
+		messageDeleteBulk: { messages?: Discord.Collection<Discord.Snowflake, Discord.Message> }
+		messageReactionAdd: { reaction?: Discord.MessageReaction; user?: Discord.User }
+		messageReactionRemove: { reaction?: Discord.MessageReaction; user?: Discord.User }
+		messageReactionRemoveAll: { message?: Discord.Message }
+		messageReactionRemoveEmoji: { reaction?: Discord.MessageReaction }
+		messageUpdate: { oldMessage?: Discord.Message; newMessage?: Discord.Message }
+		presenceUpdate: { oldPresence?: Discord.Presence; newPresence?: Discord.Presence }
+		rateLimit: { info?: { timeout?: number; limit?: number; method?: string; path?: string; route?: string } }
+		ready: {}
+		roleCreate: { role?: Discord.Role }
+		roleDelete: { role?: Discord.Role }
+		roleUpdate: { oldRole?: Discord.Role; newRole?: Discord.Role }
+		shardDisconnect: { event?: Discord.CloseEvent; id?: number }
+		shardError: { error?: Error; id?: number }
+		shardReady: { id?: number; unavailableGuilds?: Set<String> }
+		shardResume: { id?: number; replayedEvents?: number }
+		typingStart: { channel?: Discord.Channel; user?: Discord.User }
+		userUpdate: { oldUser?: Discord.User; newUser?: Discord.User }
+		voiceStateUpdate: { oldState?: Discord.VoiceState; newState?: Discord.VoiceState }
+		warn: { info?: string }
+		webhookUpdate: { channel?: Discord.Channel }
+	}
+
 	interface Ignore {
 		users?: string[]
 		guilds?: string[]
 	}
 
-	interface ListenerOptions {
-		ignore?: Ignore
-		owners?: string[]
-	}
-
-	interface Listeners {
-		channelCreate: { client?: Discord.Client; channel?: Discord.Channel; options?: ListenerOptions; Database?: DatabaseInterface }
-		channelDelete: { client?: Discord.Client; channel?: Discord.Channel; options?: ListenerOptions; Database?: DatabaseInterface }
-		channelPinsUpdate: { client?: Discord.Client; channel?: Discord.Channel; date?: Date; options?: ListenerOptions; Database?: DatabaseInterface }
-		channelUpdate: { client?: Discord.Client; oldChannel?: Discord.Channel; newChannel?: Discord.Channel; options?: ListenerOptions; Database?: DatabaseInterface }
-		debug: { client?: Discord.Client; info?: string }
-		emojiCreate: { client?: Discord.Client; emoji?: Discord.Emoji; options?: ListenerOptions; Database?: DatabaseInterface }
-		emojiDelete: { client?: Discord.Client; emoji?: Discord.Emoji; options?: ListenerOptions; Database?: DatabaseInterface }
-		emojiUpdate: { client?: Discord.Client; oldEmoji?: Discord.Emoji; newEmoji?: Discord.Emoji; options?: ListenerOptions; Database?: DatabaseInterface }
-		error: { client?: Discord.Client; error?: Error }
-		guildBanAdd: { client?: Discord.Client; guild?: Discord.Guild; user?: Discord.User; options?: ListenerOptions; Database?: DatabaseInterface }
-		guildBanRemove: { client?: Discord.Client; guild?: Discord.Guild; user?: Discord.User; options?: ListenerOptions; Database?: DatabaseInterface }
-		guildCreate: { client?: Discord.Client; guild?: Discord.Guild; Database?: DatabaseInterface }
-		guildDelete: { client?: Discord.Client; guild?: Discord.Guild; Database?: DatabaseInterface }
-		guildIntegrationsUpdate: { client?: Discord.Client; guild?: Discord.Guild; options?: ListenerOptions; Database?: DatabaseInterface }
-		guildMemberAdd: { client?: Discord.Client; member?: Discord.GuildMember; options?: ListenerOptions; Database?: DatabaseInterface }
-		guildMemberAvailable: { client?: Discord.Client; member?: Discord.GuildMember; options?: ListenerOptions; Database?: DatabaseInterface }
-		guildMemberRemove: { client?: Discord.Client; member?: Discord.GuildMember; options?: ListenerOptions; Database?: DatabaseInterface }
-		guildMembersChunk: { client?: Discord.Client; members?: Discord.Collection<Discord.Snowflake, Discord.GuildMember>; guild?: Discord.Guild; chunk?: { index?: number; count?: number; nonce?: string }; options?: ListenerOptions; Database?: DatabaseInterface }
-		guildMemberSpeaking: { client?: Discord.Client; member?: Discord.GuildMember; readonly speaking: Discord.Speaking; options?: ListenerOptions; Database?: DatabaseInterface }
-		guildMemberUpdate: { client?: Discord.Client; oldMember?: Discord.GuildMember; newMember?: Discord.GuildMember; options?: ListenerOptions; Database?: DatabaseInterface }
-		guildUnavailable: { client?: Discord.Client; guild?: Discord.Guild; Database?: DatabaseInterface }
-		guildUpdate: { client?: Discord.Client; oldGuild?: Discord.Guild; newGuild?: Discord.Guild; options?: ListenerOptions; Database?: DatabaseInterface }
-		invalidated: { client?: Discord.Client }
-		inviteCreate: { client?: Discord.Client; invite?: Discord.Invite; options?: ListenerOptions; Database?: DatabaseInterface }
-		inviteDelete: { client?: Discord.Client; invite?: Discord.Invite; options?: ListenerOptions; Database?: DatabaseInterface }
-		message: { client?: Discord.Client; message?: Discord.Message; options?: ListenerOptions; Database?: DatabaseInterface }
-		messageDelete: { client?: Discord.Client; message?: Discord.Message; options?: ListenerOptions; Database?: DatabaseInterface }
-		messageDeleteBulk: { client?: Discord.Client; messages?: Discord.Collection<Discord.Snowflake, Discord.Message>; options?: ListenerOptions; Database?: DatabaseInterface }
-		messageReactionAdd: { client?: Discord.Client; reaction?: Discord.MessageReaction; user?: Discord.User; options?: ListenerOptions; Database?: DatabaseInterface }
-		messageReactionRemove: { client?: Discord.Client; reaction?: Discord.MessageReaction; user?: Discord.User; options?: ListenerOptions; Database?: DatabaseInterface }
-		messageReactionRemoveAll: { client?: Discord.Client; message?: Discord.Message; options?: ListenerOptions; Database?: DatabaseInterface }
-		messageReactionRemoveEmoji: { client?: Discord.Client; reaction?: Discord.MessageReaction; options?: ListenerOptions; Database?: DatabaseInterface }
-		messageUpdate: { client?: Discord.Client; oldMessage?: Discord.Message; newMessage?: Discord.Message; options?: ListenerOptions; Database?: DatabaseInterface }
-		presenceUpdate: { client?: Discord.Client; oldPresence?: Discord.Presence; newPresence?: Discord.Presence; options?: ListenerOptions; Database?: DatabaseInterface }
-		rateLimit: { client?: Discord.Client; info?: { timeout?: number; limit?: number; method?: string; path?: string; route?: string } }
-		ready: { client?: Discord.Client; Database?: DatabaseInterface; Collections?: CollectionsInterface }
-		roleCreate: { client?: Discord.Client; role?: Discord.Role; options?: ListenerOptions; Database?: DatabaseInterface }
-		roleDelete: { client?: Discord.Client; role?: Discord.Role; options?: ListenerOptions; Database?: DatabaseInterface }
-		roleUpdate: { client?: Discord.Client; oldRole?: Discord.Role; newRole?: Discord.Role; options?: ListenerOptions; Database?: DatabaseInterface }
-		shardDisconnect: { client?: Discord.Client; event?: Discord.CloseEvent; id?: number }
-		shardError: { client?: Discord.Client; error?: Error; id?: number }
-		shardReady: { client?: Discord.Client; id?: number; unavailableGuilds?: Set<String> }
-		shardResume: { client?: Discord.Client; id?: number; replayedEvents?: number }
-		typingStart: { client?: Discord.Client; channel?: Discord.Channel; user?: Discord.User; options?: ListenerOptions; Database?: DatabaseInterface }
-		userUpdate: { client?: Discord.Client; oldUser?: Discord.User; newUser?: Discord.User; options?: ListenerOptions; Database?: DatabaseInterface }
-		voiceStateUpdate: { client?: Discord.Client; oldState?: Discord.VoiceState; newState?: Discord.VoiceState; options?: ListenerOptions; Database?: DatabaseInterface }
-		warn: { client?: Discord.Client; info?: string }
-		webhookUpdate: { client?: Discord.Client; channel?: Discord.Channel; options?: ListenerOptions; Database?: DatabaseInterface }
+	interface ListenerBase {
+		echidna?: Echidna
+		client?: Discord.Client
+		Collections?: CollectionsInterface
+		Database?: DatabaseInterface
 	}
 
 	interface Permissions {

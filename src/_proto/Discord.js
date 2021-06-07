@@ -107,7 +107,7 @@ Discord.GuildMemberRoleManager.prototype.select = function (search, { strict = f
  * @returns { Discord.Message }
  */
 Discord.Message.prototype.createPages = async function (array, format, options) {
-	if (!options || typeof options != 'object') options = { limit: 8, emojis: ['◀', '🔴', '▶'], idle: 3e4 }
+	options = !options || Array.isArray(options) || typeof options != 'object' ? { limit: 8, emojis: ['◀', '🔴', '▶'], idle: 3e4 } : Object.assign({ limit: 8, emojis: ['◀', '🔴', '▶'], idle: 3e4 }, options)
 	if (!array || (!Array.isArray(array) && !(array instanceof Discord.Collection))) throw new TypeError('ECHIDNA_INVALID_OPTION', 'array', 'array|Discord.Collection')
 	if (typeof format != 'function') throw new TypeError('ECHIDNA_INVALID_OPTION', 'format', 'function')
 	if (typeof options.limit != 'number' || options.limit <= 0) throw new TypeError('ECHIDNA_INVALID_OPTION', 'limit', 'number > 0')
